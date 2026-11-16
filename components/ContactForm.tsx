@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const CONTACT_EMAIL = "abdisalammoh8@gmail.com";
 
-export default function ContactForm({ linkedin }: { linkedin: string }) {
+export default function ContactForm({ linkedin, email: publicEmail = "", phone = "" }: { linkedin: string; email?: string; phone?: string }) {
   const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [msg, setMsg] = useState("");
   const [mailto, setMailto] = useState("");
@@ -76,6 +76,13 @@ export default function ContactForm({ linkedin }: { linkedin: string }) {
           </p>
         </div>
       </form>
+      {(publicEmail || phone) && (
+        <p className="contact__direct">
+          {publicEmail && <>Or email <a href={`mailto:${publicEmail}`}>{publicEmail}</a></>}
+          {publicEmail && phone && " · "}
+          {phone && <>Call <a href={`tel:${phone.replace(/[^+d]/g, "")}`}>{phone}</a></>}
+        </p>
+      )}
     </div>
   );
 }

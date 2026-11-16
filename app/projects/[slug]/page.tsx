@@ -6,6 +6,7 @@ import { repoPath, safeUrl, isHttps } from "@/lib/utils";
 import BottomNav from "@/components/BottomNav";
 import RichText from "@/components/RichText";
 import { BackIcon, GithubIcon, PhoneIcon } from "@/components/Icons";
+import ViewCounter from "@/components/ViewCounter";
 
 export const revalidate = 300;
 
@@ -34,6 +35,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   return (
     <>
       <main id="main">
+        <ViewCounter slug={project.slug} />
         <Link href="/#projects" className="back-link"><BackIcon /> Back to projects</Link>
 
         <section className="pd-hero">

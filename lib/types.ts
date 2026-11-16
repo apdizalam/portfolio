@@ -8,6 +8,12 @@ export type Profile = {
   about: string;
   github: string;
   linkedin: string;
+  initials?: string;
+  location?: string;
+  location_url?: string;
+  public_email?: string;
+  phone?: string;
+  resume_url?: string;
 };
 
 export type Education = {
@@ -40,6 +46,10 @@ export type Project = {
   app_link: string;
   app_note: string;
   sort: number;
+  featured?: boolean;
+  published?: boolean;
+  views?: number;
+  updated_at?: string;
 };
 
 export type Message = {

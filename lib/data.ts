@@ -76,9 +76,23 @@ export const getContent = cache(async (): Promise<SiteContent> => {
   };
 });
 
+const isPublished = (p: Project) => p.published !== false;
+
+/** Featured + published projects for the home page */
+export async function getFeaturedProjects() {
+  const { projects } = await getContent();
+  return projects.filter((p) => isPublished(p) && p.featured !== false);
+}
+
+/** All published projects for /projects */
+export async function getPublishedProjects() {
+  const { projects } = await getContent();
+  return projects.filter(isPublished);
+}
+
 export async function getProject(slug: string) {
   const { projects } = await getContent();
-  return projects.find((p) => p.slug === slug) || null;
+  return projects.find((p) => p.slug === slug && isPublished(p)) || null;
 }
 
 // ---- GitHub contributions: live when GITHUB_TOKEN is set, snapshot otherwise

@@ -1,4 +1,5 @@
-import { getContent, getContributions } from "@/lib/data";
+import { getContent, getContributions, getFeaturedProjects, getPublishedProjects } from "@/lib/data";
+import Link from "next/link";
 import { GITHUB_USER, isHttps } from "@/lib/utils";
 import Reveal from "@/components/Reveal";
 import Hero from "@/components/Hero";
@@ -20,7 +21,9 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const { profile, education, skills, projects } = await getContent();
+  const { profile, education, skills } = await getContent();
+  const projects = await getFeaturedProjects();
+  const allCount = (await getPublishedProjects()).length;
   const contributions = await getContributions(GITHUB_USER);
 
   return (
@@ -67,10 +70,15 @@ export default async function Home() {
         <Reveal id="projects" className="section">
           <h2 className="section__title">Featured Projects</h2>
           <ProjectsGrid projects={projects} />
+          {allCount > projects.length && (
+            <p style={{ marginTop: 16, textAlign: "center" }}>
+              <Link href="/projects" className="btn btn--outline">View all {allCount} projects <span aria-hidden="true">→</span></Link>
+            </p>
+          )}
         </Reveal>
 
         <Reveal id="contact" className="section contact-section">
-          <ContactForm linkedin={isHttps(profile.linkedin) ? profile.linkedin : ""} />
+          <ContactForm linkedin={isHttps(profile.linkedin) ? profile.linkedin : ""} email={profile.public_email || ""} phone={profile.phone || ""} />
         </Reveal>
 
         <footer className="footer">© {new Date().getFullYear()} {[profile.name, profile.name_accent].filter(Boolean).join(" ")}</footer>

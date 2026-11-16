@@ -6,7 +6,7 @@ import type { Project } from "@/lib/types";
 import { repoPath, safeUrl } from "@/lib/utils";
 import { ArrowUpRight, GithubIcon, GlobeIcon } from "./Icons";
 
-function ProjectCard({ p, index }: { p: Project; index: number }) {
+export function ProjectCard({ p, index }: { p: Project; index: number }) {
   const router = useRouter();
   const reduce = useReducedMotion();
   const href = `/projects/${p.slug}`;

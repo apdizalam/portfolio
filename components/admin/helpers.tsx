@@ -56,3 +56,23 @@ export function StatusLine({ status }: { status: Status }) {
     </p>
   );
 }
+
+/** Upload any file (e.g. a PDF resume) to the "portfolio" bucket and return its URL. */
+export async function uploadFile(file: File, folder: string, name: string) {
+  const ext = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const path = `${folder}/${name}-${Date.now().toString(36)}.${ext}`;
+  const { error } = await db().storage.from("portfolio").upload(path, file, {
+    contentType: file.type || "application/octet-stream",
+    upsert: false,
+  });
+  if (error) throw new Error(error.message);
+  return db().storage.from("portfolio").getPublicUrl(path).data.publicUrl;
+}
+
+/** Friendly message when the dashboard SQL update hasn't been run yet. */
+export function dbError(msg: string) {
+  if (/column .* does not exist|could not find the .* column/i.test(msg)) {
+    return "Your database needs the dashboard update. Run supabase/migrations/002_dashboard.sql in Supabase → SQL Editor.";
+  }
+  return msg;
+}

@@ -1,3 +1,4 @@
+import type React from "react";
 type P = { className?: string };
 
 export const GithubIcon = ({ className }: P) => (
@@ -55,3 +56,25 @@ export const CapIcon = () => (
 export const BarsIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="11" width="4" height="10" rx="1" /><rect x="10" y="4" width="4" height="17" rx="1" /><rect x="17" y="8" width="4" height="13" rx="1" /></svg>
 );
+
+/* ---- dashboard icons (stroke style) ---- */
+const S = (d: React.ReactNode) =>
+  function Icon({ className }: P) {
+    return (
+      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>
+    );
+  };
+export const DashOverviewIcon = S(<><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></>);
+export const DashProfileIcon = S(<><circle cx="12" cy="8" r="4" /><path d="M4 21c1.2-4 4.6-6 8-6s6.8 2 8 6" /></>);
+export const DashSkillsIcon = S(<><path d="M12 3v4M12 17v4M3 12h4M17 12h4" /><path d="m5.6 5.6 2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8" /></>);
+export const DashEducationIcon = S(<><path d="M22 9 12 4 2 9l10 5 10-5Z" /><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5" /></>);
+export const DashProjectsIcon = S(<><rect x="3" y="5" width="18" height="15" rx="2" /><path d="M3 9h18M8 3v4M16 3v4" /></>);
+export const DashInboxIcon = S(<><path d="M22 12h-6l-2 3h-4l-2-3H2" /><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6L5.5 5Z" /></>);
+export const ExternalIcon = S(<><path d="M14 4h6v6" /><path d="M10 14 20 4" /><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5" /></>);
+export const PencilIcon = S(<><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z" /></>);
+export const TrashIcon = S(<><path d="M4 7h16M10 11v6M14 11v6" /><path d="M6 7l1 13h10l1-13M9 7V4h6v3" /></>);
+export const GripIcon = S(<><circle cx="9" cy="6" r="1" /><circle cx="15" cy="6" r="1" /><circle cx="9" cy="12" r="1" /><circle cx="15" cy="12" r="1" /><circle cx="9" cy="18" r="1" /><circle cx="15" cy="18" r="1" /></>);
+export const PlusIcon = S(<><path d="M12 5v14M5 12h14" /></>);
+export const LogoutIcon = S(<><path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4" /><path d="M10 17l-5-5 5-5M5 12h11" /></>);
+export const ArrowUpIcon = S(<><path d="m6 15 6-6 6 6" /></>);
+export const ArrowDownIcon = S(<><path d="m6 9 6 6 6-6" /></>);
