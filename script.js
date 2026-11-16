@@ -228,10 +228,13 @@ document.getElementById("year").textContent = new Date().getFullYear();
 })();
 
 /* ---------------------------------------------------------
-   Contact form -> Gmail (via FormSubmit, no server needed)
+   Contact form -> Gmail (Web3Forms; FormSubmit as a fallback)
 --------------------------------------------------------- */
 (function contactForm() {
   const CONTACT_EMAIL = "abdisalammoh8@gmail.com";
+  // Web3Forms access key (public by design — safe to keep in the page).
+  // Get one free at https://web3forms.com with the email above.
+  const WEB3FORMS_KEY = "";
   const form = document.getElementById("contact-form");
   if (!form) return;
   const status = document.getElementById("cf-status");
@@ -261,19 +264,47 @@ document.getElementById("year").textContent = new Date().getFullYear();
     button.textContent = "Sending…";
     setStatus("");
     try {
-      const res = await fetch(`https://formsubmit.co/ajax/${CONTACT_EMAIL}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          name: data.name.trim(),
-          email: data.email.trim(),
-          _replyto: data.email.trim(),
-          _subject: `New portfolio message from ${data.name.trim()}`,
-          message: data.message.trim(),
-          _template: "table",
-          _captcha: "false",
-        }),
-      });
+      const subjectLine = `New portfolio message from ${data.name.trim()}`;
+
+      // 1) Our own server (/api/contact -> Resend -> Gmail)
+      let own;
+      try {
+        own = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: data.name, email: data.email, message: data.message, website: data._honey || "" }),
+        });
+      } catch (netErr) { own = null; }
+      if (own && own.ok) {
+        form.reset();
+        return setStatus("Thanks! Your message has been sent. I'll get back to you soon.", "success");
+      }
+      if (own && own.status === 400) {
+        const j = await own.json().catch(() => ({}));
+        return setStatus(j.error || "Please check the form and try again.", "error");
+      }
+
+      // 2) Fallback services
+      let res;
+      if (WEB3FORMS_KEY) {
+        // Web3Forms: delivers straight to the inbox linked to the access key
+        res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            access_key: WEB3FORMS_KEY,
+            subject: subjectLine,
+            from_name: "Portfolio contact form",
+            name: data.name.trim(),
+            email: data.email.trim(),
+            replyto: data.email.trim(),
+            message: data.message.trim(),
+            botcheck: "",
+          }),
+        });
+      } else {
+        throw new Error("No email service configured"); // -> email-app backup below
+      }
       const json = await res.json().catch(() => ({}));
       if (!res.ok || String(json.success) === "false") throw new Error(json.message || "Send failed");
       form.reset();
