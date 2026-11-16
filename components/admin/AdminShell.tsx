@@ -23,9 +23,9 @@ const NAV = [
 ];
 
 function useAdminTheme() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
   useEffect(() => {
-    try { if (localStorage.getItem("admin-theme") === "dark") setTheme("dark"); } catch {}
+    try { if (localStorage.getItem("admin-theme") === "light") setTheme("light"); } catch {}
   }, []);
   const toggle = () => {
     const next = theme === "light" ? "dark" : "light";
@@ -83,7 +83,10 @@ export default function AdminShell({ children, configured }: { children: React.R
     <AdminCtx.Provider value={{ email: session?.user.email || "", unread, refreshUnread }}>
       <div className="dash" data-admin-theme={theme}>
         <aside className="dash-side">
-          <div className="dash-brand">Portfolio admin</div>
+          <div className="dash-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m8 7-5 5 5 5" /><path d="m16 7 5 5-5 5" /><path d="m14 4-4 16" /></svg>
+            Portfolio admin
+          </div>
           <nav className="dash-nav" aria-label="Admin">
             {NAV.map(({ href, label, Icon }) => (
               <Link key={href} href={href} className={isActive(href) ? "is-active" : ""} aria-current={isActive(href) ? "page" : undefined}>
@@ -98,7 +101,7 @@ export default function AdminShell({ children, configured }: { children: React.R
             <div className="dash-user__row">
               <button className="d-btn" style={{ flex: 1 }} onClick={() => db().auth.signOut()}><LogoutIcon /> <span>Sign out</span></button>
               <button className="d-icon-btn d-icon-btn--box" onClick={toggle} aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}>
-                {theme === "light" ? <SunIcon /> : <MoonIcon />}
+                {theme === "light" ? <MoonIcon /> : <SunIcon />}
               </button>
             </div>
           </div>
