@@ -5,7 +5,7 @@
     "title": "Full-Stack Software Engineer & AI Enthusiast",
     "tagline": "Let's build\nsomething great!",
     "photo": "assets/profile.jpg",
-    "about": "I'm a **full-stack software engineer** and AI enthusiast based in Borama, Somaliland. I build web and mobile products end to end, from database and APIs to polished interfaces, and I integrate large language models into real products for teachers, businesses and health organizations.",
+    "about": "I'm a **full-stack software engineer** and AI enthusiast based in Borama, Somaliland. I build web and mobile products end to end, from database and APIs to polished interfaces, and I integrate large language models into real products for teachers, businesses and health organizations..",
     "github": "https://github.com/apdizalam",
     "linkedin": "https://www.linkedin.com/in/abdisalam-m-muhumed-4b6351307"
   },
@@ -61,13 +61,13 @@
         "Node.js",
         "MongoDB"
       ],
-      "appLink": "https://expo.dev/accounts/abdisalam-mohamed/projects/forntend/builds/4cbbbf48-9d18-4ffe-b126-681b5a2d51f2",
-      "appNote": "Open this link on your Android phone (or scan the QR code on the page with your phone camera).\nTap Install to download the app file (APK).\nOpen the downloaded file. If Android asks, allow installing apps from this source.\nTap Install, then open the Shaba app and sign in.",
       "categories": [
         "Web App",
         "Mobile App"
       ],
-      "date": "Jun 2026"
+      "date": "Jun 2026",
+      "appLink": "https://expo.dev/accounts/abdisalam-mohamed/projects/forntend/builds/4cbbbf48-9d18-4ffe-b126-681b5a2d51f2",
+      "appNote": "Open this link on your Android phone (or scan the QR code on the page with your phone camera).\nTap Install to download the app file (APK).\nOpen the downloaded file. If Android asks, allow installing apps from this source.\nTap Install, then open the Shaba app and sign in."
     },
     {
       "slug": "tayonx",
