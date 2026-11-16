@@ -62,7 +62,12 @@
         "MongoDB"
       ],
       "appLink": "https://expo.dev/accounts/abdisalam-mohamed/projects/forntend/builds/4cbbbf48-9d18-4ffe-b126-681b5a2d51f2",
-      "appNote": "Open this link on your Android phone (or scan the QR code on the page with your phone camera).\nTap Install to download the app file (APK).\nOpen the downloaded file. If Android asks, allow installing apps from this source.\nTap Install, then open the Shaba app and sign in."
+      "appNote": "Open this link on your Android phone (or scan the QR code on the page with your phone camera).\nTap Install to download the app file (APK).\nOpen the downloaded file. If Android asks, allow installing apps from this source.\nTap Install, then open the Shaba app and sign in.",
+      "categories": [
+        "Web App",
+        "Mobile App"
+      ],
+      "date": "Jun 2026"
     },
     {
       "slug": "tayonx",
@@ -77,7 +82,12 @@
         "Express",
         "MongoDB",
         "Socket.IO"
-      ]
+      ],
+      "categories": [
+        "Website",
+        "Marketplace"
+      ],
+      "date": "Nov 2026"
     }
   ]
 }

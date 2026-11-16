@@ -261,6 +261,8 @@
     $("pf-summary").value = p.summary || "";
     $("pf-live").value = p.live || "";
     $("pf-tags").value = (p.tags || []).join(", ");
+    $("pf-cats").value = (p.categories || []).join(", ");
+    $("pf-date").value = p.date || "";
     $("pf-app").value = p.appLink || "";
     $("pf-appnote").value = p.appNote || "";
     $("pf-image").value = "";
@@ -358,6 +360,8 @@
       live,
       image: existing ? existing.image : "",
       tags: $("pf-tags").value.split(",").map((t) => t.trim()).filter(Boolean),
+      categories: $("pf-cats").value.split(",").map((t) => t.trim()).filter(Boolean),
+      date: $("pf-date").value.trim(),
     };
     if (appLink) { project.appLink = appLink; project.appNote = $("pf-appnote").value.trim(); }
     if (pendingImage) {

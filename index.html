@@ -109,7 +109,7 @@
       <!-- Projects -->
       <section id="projects" class="section reveal">
         <h2 class="section__title">Featured Projects</h2>
-        <div class="projects" id="projects-list"></div>
+        <div class="pgrid" id="projects-list"></div>
       </section>
 
       <!-- Contact -->
@@ -130,11 +130,7 @@
               <input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="150" />
             </div>
             <div class="field field--full">
-              <label for="cf-subject">Subject <span class="optional">(optional)</span></label>
-              <input id="cf-subject" name="subject" type="text" maxlength="150" />
-            </div>
-            <div class="field field--full">
-              <label for="cf-message">Message</label>
+              <label for="cf-message">Description</label>
               <textarea id="cf-message" name="message" rows="5" required maxlength="5000"></textarea>
             </div>
             <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
@@ -179,6 +175,7 @@
     </nav>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/motion@11.11.17/dist/motion.js"></script>
   <script src="github-data.js"></script>
   <script src="content.js"></script>
   <script src="theme.js"></script>

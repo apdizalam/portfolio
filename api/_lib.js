@@ -126,7 +126,8 @@ function cleanContent(input) {
     if (appLink && !/^https:\/\/[^\s"'<>]+$/i.test(appLink)) throw new Error(`App link for "${title}" must start with https://`);
     const appNote = str(p.appNote, 1000);
     const tags = (Array.isArray(p.tags) ? p.tags : []).map((t) => str(t, 30)).filter(Boolean).slice(0, 12);
-    const out = { slug, title, summary: str(p.summary, 400), repo, live, image, tags };
+    const categories = (Array.isArray(p.categories) ? p.categories : []).map((t) => str(t, 30)).filter(Boolean).slice(0, 5);
+    const out = { slug, title, summary: str(p.summary, 400), repo, live, image, tags, categories, date: str(p.date, 30) };
     if (appLink) { out.appLink = appLink; out.appNote = appNote; }
     return out;
   });

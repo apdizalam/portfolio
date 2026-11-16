@@ -56,6 +56,7 @@ http.createServer(async (req, res) => {
     return res.end("Not found");
   }
   res.setHeader("Content-Type", TYPES[path.extname(fp).toLowerCase()] || "application/octet-stream");
+  res.setHeader("Cache-Control", "no-cache");
   fs.createReadStream(fp).pipe(res);
 }).listen(PORT, () => {
   console.log(`Portfolio running:  http://localhost:${PORT}`);
