@@ -59,6 +59,22 @@
   if (live && /^https?:/.test(live)) actions.appendChild(link("btn btn--solid", live, "Live Demo " + arrow));
   if (repoUrl) actions.appendChild(link("btn btn--outline", repoUrl, gh + " View Code"));
 
+  // ---- Mobile app download + install steps --------------------------------
+  const appLink = safeUrl(project.appLink);
+  if (appLink && /^https:/.test(appLink)) {
+    const phone = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></svg>';
+    actions.appendChild(link("btn btn--outline", appLink, phone + " Mobile App"));
+    $("pd-app-link").href = appLink;
+    const steps = String(project.appNote || "Open this link on your phone and tap Install.")
+      .split("\n").map((s) => s.trim()).filter(Boolean);
+    steps.forEach((s) => {
+      const li = document.createElement("li");
+      li.textContent = s;
+      $("pd-app-steps").appendChild(li);
+    });
+    $("pd-app").hidden = false;
+  }
+
   if (!repoUrl) {
     readmeEl.innerHTML = "";
     const p = document.createElement("p");

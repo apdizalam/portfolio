@@ -43,6 +43,13 @@ function verifyToken(token) {
   }
 }
 
+function usernameMatches(input) {
+  const expected = (process.env.ADMIN_USERNAME || "abdisalam").toLowerCase();
+  const a = crypto.createHash("sha256").update(String(input || "").trim().toLowerCase()).digest();
+  const b = crypto.createHash("sha256").update(expected).digest();
+  return crypto.timingSafeEqual(a, b);
+}
+
 function passwordMatches(input) {
   const a = crypto.createHash("sha256").update(String(input || "")).digest();
   const b = crypto.createHash("sha256").update(process.env.ADMIN_PASSWORD).digest();
@@ -115,8 +122,13 @@ function cleanContent(input) {
     const image = str(p.image, 300);
     if (image && !isHttp(image) && !/^assets\/[\w./-]+$/.test(image)) throw new Error(`Bad image for "${title}"`);
     if (image.includes("..")) throw new Error(`Bad image for "${title}"`);
+    const appLink = str(p.appLink, 400);
+    if (appLink && !/^https:\/\/[^\s"'<>]+$/i.test(appLink)) throw new Error(`App link for "${title}" must start with https://`);
+    const appNote = str(p.appNote, 1000);
     const tags = (Array.isArray(p.tags) ? p.tags : []).map((t) => str(t, 30)).filter(Boolean).slice(0, 12);
-    return { slug, title, summary: str(p.summary, 400), repo, live, image, tags };
+    const out = { slug, title, summary: str(p.summary, 400), repo, live, image, tags };
+    if (appLink) { out.appLink = appLink; out.appNote = appNote; }
+    return out;
   });
 
   return { skills, projects };
@@ -137,5 +149,5 @@ function cleanUploads(list) {
 
 module.exports = {
   REPO, BRANCH, CONTENT_PATH, send, configured, createToken, verifyToken,
-  passwordMatches, requireAuth, gh, cleanContent, cleanUploads,
+  usernameMatches, passwordMatches, requireAuth, gh, cleanContent, cleanUploads,
 };

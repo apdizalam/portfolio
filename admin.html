@@ -30,6 +30,10 @@
         <p class="hint">Only you can publish changes to the portfolio.</p>
         <form id="login-form" class="admin-list">
           <div class="field">
+            <label for="username">Username</label>
+            <input id="username" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" required />
+          </div>
+          <div class="field">
             <label for="password">Password</label>
             <input id="password" type="password" autocomplete="current-password" required />
           </div>
@@ -86,6 +90,14 @@
             <div class="field">
               <label for="pf-tags">Technologies <span class="optional">(comma separated)</span></label>
               <input id="pf-tags" maxlength="300" placeholder="React, Node.js" />
+            </div>
+            <div class="field field--full">
+              <label for="pf-app">Mobile app download link <span class="optional">(optional, e.g. Expo build link)</span></label>
+              <input id="pf-app" type="url" maxlength="400" placeholder="https://expo.dev/…" />
+            </div>
+            <div class="field field--full">
+              <label for="pf-appnote">How to install the app <span class="optional">(one step per line)</span></label>
+              <textarea id="pf-appnote" rows="4" maxlength="1000"></textarea>
             </div>
             <div class="field field--full">
               <label for="pf-image">Cover image</label>

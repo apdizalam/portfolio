@@ -39,7 +39,7 @@
     e.preventDefault();
     status("login-status", "Checking…");
     try {
-      const { token: t } = await api("login", { method: "POST", body: { password: $("password").value } });
+      const { token: t } = await api("login", { method: "POST", body: { username: $("username").value, password: $("password").value } });
       token = t;
       try { sessionStorage.setItem("admin-token", t); } catch (err) {}
       $("password").value = "";
@@ -181,6 +181,8 @@
     $("pf-summary").value = p.summary || "";
     $("pf-live").value = p.live || "";
     $("pf-tags").value = (p.tags || []).join(", ");
+    $("pf-app").value = p.appLink || "";
+    $("pf-appnote").value = p.appNote || "";
     $("pf-image").value = "";
     const prev = (uploads[slug] && uploads[slug].preview) || safeUrl(p.image);
     $("pf-preview").hidden = !prev;
@@ -257,6 +259,8 @@
     const live = $("pf-live").value.trim();
     if (!title) return status("pf-status", "Please add a title.", "error");
     if (live && !/^https?:\/\//i.test(live)) return status("pf-status", "The live link must start with https://", "error");
+    const appLink = $("pf-app").value.trim();
+    if (appLink && !/^https:\/\//i.test(appLink)) return status("pf-status", "The app link must start with https://", "error");
 
     const existing = content.projects.find((p) => p.slug === editing);
     let slug = existing ? existing.slug : slugify($("pf-repo").value.trim().split("/").pop() || title);
@@ -275,13 +279,14 @@
       image: existing ? existing.image : "",
       tags: $("pf-tags").value.split(",").map((t) => t.trim()).filter(Boolean),
     };
+    if (appLink) { project.appLink = appLink; project.appNote = $("pf-appnote").value.trim(); }
     if (pendingImage) {
       const path = `assets/projects/${slug}.${pendingImage.ext}`;
       uploads[slug] = { path, data: pendingImage.data, preview: pendingImage.preview };
       project.image = path;
     }
 
-    if (existing) Object.assign(existing, project);
+    if (existing) { delete existing.appLink; delete existing.appNote; Object.assign(existing, project); }
     else content.projects.push(project);
 
     $("project-form").hidden = true;

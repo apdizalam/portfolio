@@ -1,12 +1,33 @@
 {
   "skills": [
-    { "name": "React.js", "icon": "react" },
-    { "name": "Node.js", "icon": "nodejs" },
-    { "name": "MongoDB", "icon": "mongodb" },
-    { "name": "JavaScript", "icon": "javascript" },
-    { "name": "HTML", "icon": "html5" },
-    { "name": "CSS", "icon": "css3" },
-    { "name": "Git", "icon": "git" }
+    {
+      "name": "React.js",
+      "icon": "react"
+    },
+    {
+      "name": "Node.js",
+      "icon": "nodejs"
+    },
+    {
+      "name": "MongoDB",
+      "icon": "mongodb"
+    },
+    {
+      "name": "JavaScript",
+      "icon": "javascript"
+    },
+    {
+      "name": "HTML",
+      "icon": "html5"
+    },
+    {
+      "name": "CSS",
+      "icon": "css3"
+    },
+    {
+      "name": "Git",
+      "icon": "git"
+    }
   ],
   "projects": [
     {
@@ -16,7 +37,14 @@
       "repo": "shaba-billing-system",
       "live": "https://shaba-billing-system.vercel.app",
       "image": "assets/shaba.png",
-      "tags": ["JavaScript", "React", "Node.js", "MongoDB"]
+      "tags": [
+        "JavaScript",
+        "React",
+        "Node.js",
+        "MongoDB"
+      ],
+      "appLink": "https://expo.dev/accounts/abdisalam-mohamed/projects/forntend/builds/4cbbbf48-9d18-4ffe-b126-681b5a2d51f2",
+      "appNote": "Open this link on your Android phone (or scan the QR code on the page with your phone camera).\nTap Install to download the app file (APK).\nOpen the downloaded file. If Android asks, allow installing apps from this source.\nTap Install, then open the Shaba app and sign in."
     },
     {
       "slug": "tayonx",
@@ -25,7 +53,13 @@
       "repo": "Tayonx",
       "live": "https://tayonx.vercel.app",
       "image": "assets/tayonx.webp",
-      "tags": ["React", "Node.js", "Express", "MongoDB", "Socket.IO"]
+      "tags": [
+        "React",
+        "Node.js",
+        "Express",
+        "MongoDB",
+        "Socket.IO"
+      ]
     }
   ]
 }
