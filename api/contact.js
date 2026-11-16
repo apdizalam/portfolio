@@ -6,12 +6,20 @@ const { send } = require("./_lib");
 const CONTACT_TO = process.env.CONTACT_TO || "abdisalammoh8@gmail.com";
 const FROM = process.env.CONTACT_FROM || "Portfolio <onboarding@resend.dev>";
 
+// The key should be in RESEND_API_KEY, but accept a Resend key ("re_...") saved under any name.
+function resendKey() {
+  if (process.env.RESEND_API_KEY) return process.env.RESEND_API_KEY.trim();
+  const found = Object.values(process.env).find((v) => typeof v === "string" && /^re_[A-Za-z0-9_]{16,}$/.test(v.trim()));
+  return found ? found.trim() : "";
+}
+
 const clean = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 const escapeHtml = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return send(res, 405, { error: "Method not allowed" });
-  if (!process.env.RESEND_API_KEY) return send(res, 503, { error: "Email sending isn't set up yet." });
+  const KEY = resendKey();
+  if (!KEY) return send(res, 503, { error: "Email sending isn't set up yet." });
 
   const body = req.body || {};
   if (body.website) return send(res, 200, { ok: true }); // bot filled the hidden field
@@ -35,7 +43,7 @@ module.exports = async (req, res) => {
   try {
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         from: FROM,
         to: [CONTACT_TO],
