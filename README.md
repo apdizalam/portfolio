@@ -1,29 +1,29 @@
 # Abdisalam Mohamed Muhumed — Portfolio
 
-Personal portfolio of a Full-Stack Software Engineer & AI Enthusiast based in Borama, Somaliland.
+Full-stack portfolio: **Next.js 15 (App Router, TypeScript)** + **Supabase** (Postgres, Auth, Storage), deployed on **Vercel**.
 
-Plain HTML, CSS and JavaScript, plus three small Vercel serverless functions for the admin page. No build step.
+## Stack
+- **Frontend:** Next.js / React 19, plain CSS (`app/globals.css`), Framer Motion (`motion/react`)
+- **Database:** Supabase Postgres — `profile`, `education`, `skills`, `projects`, `messages` (Row Level Security: public read, admin write)
+- **Auth:** Supabase Auth (email + password) for `/admin`; admins listed in the `admins` table
+- **Storage:** Supabase Storage bucket `portfolio` for uploaded images
+- **Email:** contact form saves to `messages` and emails via Resend
+- **GitHub:** live contribution calendar (GraphQL) and project READMEs
 
-## Structure
+## Local development
+```bash
+npm install
+npm run dev
+```
+Create `.env.local`:
+```
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...        # publishable key
+SUPABASE_SERVICE_ROLE_KEY=...            # secret key (server only)
+RESEND_API_KEY=...                       # optional: contact emails
+GITHUB_TOKEN=...                         # optional: live contribution graph
+```
 
-- `index.html`, `script.js` – home page (skills and projects are loaded from `data/content.json`)
-- `project.html`, `project-page.js` – project page; shows the repo's README live from GitHub
-- `admin.html`, `admin.js` – private admin page at `/admin`
-- `api/` – `login`, `content`, `publish` serverless functions used by the admin page
-- `data/content.json` – the editable list of skills and projects
-- `content.js`, `theme.js`, `styles.css`, `github-data.js`, `assets/`
-
-## Admin page setup (one time, in Vercel)
-
-Vercel → Project → Settings → Environment Variables:
-
-| Name | Value |
-| --- | --- |
-| `ADMIN_PASSWORD` | the password you will use on `/admin` |
-| `GITHUB_TOKEN` | a fine-grained GitHub token with access to **only** the `portfolio` repo and **Contents: Read and write** |
-
-Redeploy after adding them. Publishing from `/admin` commits to this repo, and Vercel redeploys the site automatically.
-
-## Contact form
-
-Messages are delivered by [FormSubmit](https://formsubmit.co). The first message triggers an activation email to the inbox; click **Activate** once and later messages arrive normally.
+## Database setup
+Run `supabase/setup.sql` once in the Supabase SQL Editor, then create your admin user in
+Authentication → Users (email must be in the `admins` table).
