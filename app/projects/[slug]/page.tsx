@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getContent, getProject } from "@/lib/data";
-import { renderReadme } from "@/lib/readme";
+import { getProjectReadme } from "@/lib/readme";
+import Gallery from "@/components/Gallery";
 import { repoPath, safeUrl, isHttps } from "@/lib/utils";
 import BottomNav from "@/components/BottomNav";
 import RichText from "@/components/RichText";
@@ -27,7 +28,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   if (!project) notFound();
 
   const repo = repoPath(project.repo);
-  const readme = repo ? await renderReadme(repo) : null;
+  const readme = repo ? await getProjectReadme(repo) : null;
+  const shots = readme?.groups.reduce((n, g) => n + g.images.length, 0) || 0;
   const cover = safeUrl(project.image_url);
   const live = safeUrl(project.live);
   const steps = (project.app_note || "Open this link on your phone and tap Install.").split("\n").map((s) => s.trim()).filter(Boolean);
@@ -76,18 +78,36 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         <section className="section">
           <h2 className="section__title">Overview</h2>
           <article className="card readme">
-            {readme ? (
-              <div dangerouslySetInnerHTML={{ __html: readme }} />
-            ) : repo ? (
-              <p className="readme__status">
-                Couldn&apos;t load the README right now.{" "}
-                <a href={`https://github.com/${repo}#readme`} target="_blank" rel="noopener">Read it on GitHub</a>.
-              </p>
+            {readme?.overview ? (
+              <div dangerouslySetInnerHTML={{ __html: readme.overview }} />
             ) : (
               <RichText text={project.summary || ""} />
             )}
           </article>
         </section>
+
+        {shots > 0 && (
+          <section className="section">
+            <h2 className="section__title">Screenshots</h2>
+            <Gallery groups={readme!.groups} />
+          </section>
+        )}
+
+        {readme?.features && (
+          <section className="section">
+            <details className="card readme features">
+              <summary>Key features</summary>
+              <div dangerouslySetInnerHTML={{ __html: readme.features }} />
+            </details>
+          </section>
+        )}
+
+        {repo && (
+          <p className="readme-more">
+            Want the technical details (setup, architecture, API)?{" "}
+            <a href={`https://github.com/${repo}#readme`} target="_blank" rel="noopener">Read the full README on GitHub →</a>
+          </p>
+        )}
       </main>
       <BottomNav />
     </>
