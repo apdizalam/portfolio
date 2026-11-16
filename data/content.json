@@ -1,0 +1,31 @@
+{
+  "skills": [
+    { "name": "React.js", "icon": "react" },
+    { "name": "Node.js", "icon": "nodejs" },
+    { "name": "MongoDB", "icon": "mongodb" },
+    { "name": "JavaScript", "icon": "javascript" },
+    { "name": "HTML", "icon": "html5" },
+    { "name": "CSS", "icon": "css3" },
+    { "name": "Git", "icon": "git" }
+  ],
+  "projects": [
+    {
+      "slug": "shaba-billing-system",
+      "title": "Shaba Water Billing System",
+      "summary": "Water billing management system with mobile app for Shaba Water.",
+      "repo": "shaba-billing-system",
+      "live": "https://shaba-billing-system.vercel.app",
+      "image": "assets/shaba.png",
+      "tags": ["JavaScript", "React", "Node.js", "MongoDB"]
+    },
+    {
+      "slug": "tayonx",
+      "title": "Tayonx",
+      "summary": "Cargo marketplace: buy from abroad and ship with verified cargo companies.",
+      "repo": "Tayonx",
+      "live": "https://tayonx.vercel.app",
+      "image": "assets/tayonx.webp",
+      "tags": ["React", "Node.js", "Express", "MongoDB", "Socket.IO"]
+    }
+  ]
+}

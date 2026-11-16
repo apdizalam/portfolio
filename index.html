@@ -21,23 +21,6 @@
   </div>
 
   <div id="root">
-    <!-- Top navigation -->
-    <header class="topbar">
-      <nav class="topnav" aria-label="Primary">
-        <a href="#home" class="logo" aria-label="Home">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m8 7-5 5 5 5"/><path d="m16 7 5 5-5 5"/><path d="m14 4-4 16"/></svg>
-        </a>
-        <ul class="topnav__links">
-          <li><a href="#home" class="nav-link is-active">Home</a></li>
-          <li><a href="#about" class="nav-link">About</a></li>
-          <li><a href="#projects" class="nav-link">Projects</a></li>
-          <li><a href="#skills" class="nav-link">Skills</a></li>
-          <li><a href="#contact" class="nav-link">Contact</a></li>
-        </ul>
-        <span class="topnav__spacer" aria-hidden="true"></span>
-      </nav>
-    </header>
-
     <main>
       <!-- Hero -->
       <section id="home" class="hero reveal">
@@ -61,7 +44,7 @@
             <a href="https://www.linkedin.com/in/abdisalam-m-muhumed-4b6351307" target="_blank" rel="noopener" aria-label="LinkedIn">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"/></svg>
             </a>
-            <a href="mailto:apdizalammohameth@gmail.com" aria-label="Email">
+            <a href="#contact" aria-label="Send me a message">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
             </a>
           </div>
@@ -100,21 +83,10 @@
         </div>
       </section>
 
-      <!-- Experience & Education -->
-      <section id="experience" class="section reveal">
-        <h2 class="section__title">Work Experience &amp; Education</h2>
+      <!-- Education -->
+      <section id="education" class="section reveal">
+        <h2 class="section__title">Education</h2>
         <ol class="timeline">
-          <li class="timeline__item">
-            <div class="timeline__icon timeline__icon--lools">
-              <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M16 16c-3-4-5.5-6-8-6a6 6 0 0 0 0 12c2.5 0 5-2 8-6Zm0 0c3 4 5.5 6 8 6a6 6 0 0 0 0-12c-2.5 0-5 2-8 6Z"/></svg>
-            </div>
-            <div class="timeline__body">
-              <h3>Lools AI</h3>
-              <p class="meta">1 yr 5 mos • Borama, Awdal – On-site</p>
-              <h4>Software Engineer</h4>
-              <p>Part-time software engineer at Lools AI.</p>
-            </div>
-          </li>
           <li class="timeline__item">
             <div class="timeline__icon">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3Z"/><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82Z"/></svg>
@@ -131,77 +103,46 @@
       <!-- Skills -->
       <section id="skills" class="section reveal">
         <h2 class="section__title">Skills</h2>
-        <ul class="chips">
-          <li class="chip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#61dafb" stroke-width="1.4"><circle cx="12" cy="12" r="2" fill="#61dafb"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg>
-            React.js
-          </li>
-          <li class="chip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#3c873a" stroke-width="2" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5Z"/><path d="M12 8v8" /></svg>
-            Node.js
-          </li>
-          <li class="chip">
-            <svg viewBox="0 0 24 24" fill="#4db33d"><path d="M12 1c-.3 2.4-5 6.4-5 12 0 4.1 3 6.7 4.4 7.6L11.7 23h.6l.3-2.4C14 19.7 17 17.1 17 13c0-5.6-4.7-9.6-5-12Z"/></svg>
-            MongoDB
-          </li>
-          <li class="chip">
-            <svg viewBox="0 0 24 24"><rect width="24" height="24" rx="3" fill="#f7df1e"/><text x="13" y="20" font-size="10" font-weight="700" font-family="Arial" fill="#111">JS</text></svg>
-            JavaScript
-          </li>
-          <li class="chip">
-            <svg viewBox="0 0 24 24" fill="#e34f26"><path d="M3 2h18l-1.6 18L12 22l-7.4-2L3 2Zm4 5 .5 4h8.3l-.3 3.4-3.5 1-3.5-1-.2-2H6.4l.4 3.8L12 18l5.2-1.4.8-8.6H7.9L7.7 7H16.4l.2-2H7Z"/></svg>
-            HTML
-          </li>
-          <li class="chip">
-            <svg viewBox="0 0 24 24" fill="#2965f1"><path d="M3 2h18l-1.6 18L12 22l-7.4-2L3 2Zm13.4 5H7l.2 2h8.9l-.3 3H8l.2 2h7.4l-.3 2.6-3.3 1-3.3-1-.2-1.6h-2l.4 3.3L12 18l5.1-1.4.9-9.6Z"/></svg>
-            CSS
-          </li>
-          <li class="chip">
-            <svg viewBox="0 0 24 24" fill="#f05032"><path d="M23.5 11 13 .5a1.6 1.6 0 0 0-2.2 0L8.6 2.7l2.8 2.8a1.9 1.9 0 0 1 2.4 2.4l2.7 2.7a1.9 1.9 0 1 1-1.1 1.1l-2.5-2.5v6.6a1.9 1.9 0 1 1-1.6-.1V9a1.9 1.9 0 0 1-1-2.5L7.5 3.8.5 10.8a1.6 1.6 0 0 0 0 2.2L11 23.5a1.6 1.6 0 0 0 2.2 0L23.5 13.2a1.6 1.6 0 0 0 0-2.2Z"/></svg>
-            Git
-          </li>
-        </ul>
+        <ul class="chips" id="skills-list"></ul>
       </section>
 
       <!-- Projects -->
       <section id="projects" class="section reveal">
         <h2 class="section__title">Featured Projects</h2>
-        <div class="projects">
-          <article class="card project">
-            <div class="project__thumb" aria-hidden="true">
-              <img src="assets/shaba.png" alt="" loading="lazy" />
-            </div>
-            <div class="project__body">
-              <h3>Shaba Water Billing System</h3>
-              <p>Water billing management system with mobile app for Shaba Water.</p>
-              <a href="project?p=shaba-billing-system" class="btn btn--outline">View Project <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-          <article class="card project">
-            <div class="project__thumb" aria-hidden="true">
-              <img src="assets/tayonx.webp" alt="" loading="lazy" />
-            </div>
-            <div class="project__body">
-              <h3>Tayonx</h3>
-              <p>Cargo marketplace: buy from abroad and ship with verified cargo companies.</p>
-              <a href="project?p=tayonx" class="btn btn--solid">View Project <span aria-hidden="true">→</span></a>
-            </div>
-          </article>
-        </div>
+        <div class="projects" id="projects-list"></div>
       </section>
 
       <!-- Contact -->
-      <section id="contact" class="section reveal">
-        <h2 class="section__title">Contact</h2>
+      <section id="contact" class="section reveal contact-section">
         <div class="card contact">
-          <p>Have a project in mind or want to collaborate? I'm open to freelance work and full-time roles.</p>
-          <div class="contact__actions">
-            <a href="mailto:apdizalammohameth@gmail.com" class="btn btn--solid">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-              Send an Email
-            </a>
-            <a href="https://www.linkedin.com/in/abdisalam-m-muhumed-4b6351307" target="_blank" rel="noopener" class="btn btn--outline">Connect on LinkedIn</a>
-          </div>
+          <span class="contact__badge">Contact</span>
+          <h3 class="contact__title">Get in Touch</h3>
+          <p>Want to work together or just say hi? Send me a message below or reach out
+            <a href="https://www.linkedin.com/in/abdisalam-m-muhumed-4b6351307" target="_blank" rel="noopener">on LinkedIn</a>,
+            and I'll respond as soon as I can.</p>
+          <form class="contact-form" id="contact-form" novalidate>
+            <div class="field">
+              <label for="cf-name">Name</label>
+              <input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="100" />
+            </div>
+            <div class="field">
+              <label for="cf-email">Email</label>
+              <input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="150" />
+            </div>
+            <div class="field field--full">
+              <label for="cf-subject">Subject <span class="optional">(optional)</span></label>
+              <input id="cf-subject" name="subject" type="text" maxlength="150" />
+            </div>
+            <div class="field field--full">
+              <label for="cf-message">Message</label>
+              <textarea id="cf-message" name="message" rows="5" required maxlength="5000"></textarea>
+            </div>
+            <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <div class="field--full contact-form__footer">
+              <button type="submit" class="btn btn--solid contact-form__submit">Send message</button>
+              <p class="form-status" id="cf-status" role="status" aria-live="polite"></p>
+            </div>
+          </form>
         </div>
       </section>
 
@@ -239,6 +180,7 @@
   </div>
 
   <script src="github-data.js"></script>
+  <script src="content.js"></script>
   <script src="theme.js"></script>
   <script src="script.js"></script>
 </body>
