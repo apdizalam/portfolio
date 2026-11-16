@@ -279,7 +279,20 @@ document.getElementById("year").textContent = new Date().getFullYear();
       form.reset();
       setStatus("Thanks! Your message has been sent. I'll get back to you soon.", "success");
     } catch (err) {
-      setStatus(`Sorry, the message couldn't be sent. Please try again or email ${CONTACT_EMAIL}.`, "error");
+      // Backup: open the visitor's email app with the message already written,
+      // so the message still reaches the inbox even if the form service is down.
+      const subject = `Portfolio message from ${data.name.trim()}`;
+      const body = `${data.message.trim()}\n\n— ${data.name.trim()} (${data.email.trim()})`;
+      const mailto = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      status.textContent = "";
+      status.className = "form-status is-error";
+      status.append("The form couldn't send right now. ");
+      const a = document.createElement("a");
+      a.href = mailto;
+      a.textContent = "Send it from your email app instead";
+      a.style.textDecoration = "underline";
+      status.append(a, " (your message is already filled in).");
+      try { window.location.href = mailto; } catch (e) { /* link above still works */ }
     } finally {
       button.disabled = false;
       button.textContent = "Send message";
