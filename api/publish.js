@@ -1,11 +1,12 @@
 // POST /api/publish  { content, uploads: [{ path, data(base64) }] }
 // Writes data/content.json (+ any new images) to GitHub in ONE commit.
 // Vercel sees the commit and redeploys the site automatically.
-const { send, requireAuth, gh, cleanContent, cleanUploads, BRANCH, CONTENT_PATH } = require("./_lib");
+const { send, requireAuth, canPublish, NO_TOKEN, gh, cleanContent, cleanUploads, BRANCH, CONTENT_PATH } = require("./_lib");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return send(res, 405, { error: "Method not allowed" });
   if (!requireAuth(req, res)) return;
+  if (!canPublish()) return send(res, 503, { error: NO_TOKEN });
 
   let content, uploads;
   try {

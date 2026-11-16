@@ -76,6 +76,10 @@
         projects: data.content.projects || [],
       };
       fillProfile();
+      if (data.canPublish === false) {
+        $("publish-bar").classList.add("is-warning");
+        status("publish-status", "You can edit, but publishing is off until GITHUB_TOKEN is added in Vercel (Settings → Environment Variables), then redeploy.", "error");
+      }
       setDirty(false);
       showTab("projects");
       render();

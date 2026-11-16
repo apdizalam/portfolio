@@ -1,10 +1,10 @@
 // POST /api/login  { username, password } -> { token }
-const { send, configured, createToken, usernameMatches, passwordMatches } = require("./_lib");
+const { send, configured, NOT_CONFIGURED, createToken, usernameMatches, passwordMatches } = require("./_lib");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return send(res, 405, { error: "Method not allowed" });
   if (!configured()) {
-    return send(res, 503, { error: "Admin is not set up yet. Add ADMIN_PASSWORD and GITHUB_TOKEN in Vercel → Settings → Environment Variables, then redeploy." });
+    return send(res, 503, { error: NOT_CONFIGURED });
   }
   const body = req.body || {};
   const userOk = usernameMatches(body.username);

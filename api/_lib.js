@@ -14,8 +14,14 @@ function send(res, status, body) {
 }
 
 function configured() {
-  return Boolean(process.env.ADMIN_PASSWORD && process.env.GITHUB_TOKEN);
+  return Boolean(process.env.ADMIN_PASSWORD);
 }
+
+function canPublish() {
+  return Boolean(process.env.GITHUB_TOKEN);
+}
+const NOT_CONFIGURED = "The admin password isn't set on the server yet. In Vercel open portfolio → Settings → Environment Variables, add ADMIN_PASSWORD, then redeploy.";
+const NO_TOKEN = "Publishing needs a GitHub token. In Vercel open portfolio → Settings → Environment Variables, add GITHUB_TOKEN, then redeploy.";
 
 // ---- sessions: signed, expiring tokens (no database needed) -------------------
 function key() {
@@ -58,7 +64,7 @@ function passwordMatches(input) {
 
 function requireAuth(req, res) {
   if (!configured()) {
-    send(res, 503, { error: "Admin is not set up yet. Add ADMIN_PASSWORD and GITHUB_TOKEN in Vercel → Settings → Environment Variables, then redeploy." });
+    send(res, 503, { error: NOT_CONFIGURED });
     return false;
   }
   const header = req.headers.authorization || "";
@@ -175,6 +181,6 @@ function cleanUploads(list) {
 }
 
 module.exports = {
-  REPO, BRANCH, CONTENT_PATH, send, configured, createToken, verifyToken,
+  REPO, BRANCH, CONTENT_PATH, send, configured, canPublish, NOT_CONFIGURED, NO_TOKEN, createToken, verifyToken,
   usernameMatches, passwordMatches, requireAuth, gh, cleanContent, cleanUploads,
 };
