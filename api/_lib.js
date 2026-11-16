@@ -131,7 +131,33 @@ function cleanContent(input) {
     return out;
   });
 
-  return { skills, projects };
+  const pr = input.profile && typeof input.profile === "object" ? input.profile : {};
+  const linkField = (v, label) => {
+    const u = str(v, 300);
+    if (u && !/^https:\/\/[^\s"'<>]+$/i.test(u)) throw new Error(`${label} link must start with https://`);
+    return u;
+  };
+  const photo = str(pr.photo, 300);
+  if (photo && ((!isHttp(photo) && !/^assets\/[\w./-]+$/.test(photo)) || photo.includes(".."))) throw new Error("Bad profile photo");
+  const profile = {
+    name: str(pr.name, 80) || "Your Name",
+    nameAccent: str(pr.nameAccent, 60),
+    title: str(pr.title, 120),
+    tagline: str(pr.tagline, 80),
+    photo,
+    about: str(pr.about, 3000),
+    github: linkField(pr.github, "GitHub"),
+    linkedin: linkField(pr.linkedin, "LinkedIn"),
+  };
+
+  const education = (Array.isArray(input.education) ? input.education : []).slice(0, 20).map((e) => {
+    e = e || {};
+    const school = str(e.school, 120);
+    if (!school) throw new Error("Every education entry needs a school name");
+    return { school, dates: str(e.dates, 60), place: str(e.place, 80), degree: str(e.degree, 160) };
+  });
+
+  return { profile, education, skills, projects };
 }
 
 function cleanUploads(list) {
@@ -139,7 +165,7 @@ function cleanUploads(list) {
   if (list.length > 5) throw new Error("Upload at most 5 images at a time");
   return list.map((u) => {
     const path = str(u && u.path, 120);
-    if (!/^assets\/projects\/[a-z0-9-]+\.(webp|png|jpe?g)$/.test(path)) throw new Error("Bad image file name");
+    if (!/^assets\/(projects|profile)\/[a-z0-9-]+\.(webp|png|jpe?g)$/.test(path)) throw new Error("Bad image file name");
     const data = typeof u.data === "string" ? u.data.replace(/^data:[^,]+,/, "") : "";
     if (!data || !/^[A-Za-z0-9+/=]+$/.test(data)) throw new Error("Bad image data");
     if ((data.length * 3) / 4 > 3 * 1024 * 1024) throw new Error("Image is too large (max 3 MB)");

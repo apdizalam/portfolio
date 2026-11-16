@@ -16,8 +16,70 @@ document.getElementById("year").textContent = new Date().getFullYear();
     return n;
   };
 
+  // **bold** -> <strong>, everything else as plain text
+  function richText(target, text) {
+    target.innerHTML = "";
+    String(text || "").split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean).forEach((para) => {
+      const p = el("p");
+      para.split(/(\*\*[^*]+\*\*)/).forEach((part) => {
+        if (/^\*\*[^*]+\*\*$/.test(part)) p.appendChild(el("strong", null, part.slice(2, -2)));
+        else p.appendChild(document.createTextNode(part));
+      });
+      target.appendChild(p);
+    });
+  }
+
+  function renderProfile(profile, education) {
+    if (profile) {
+      const set = (id, text) => { const n = document.getElementById(id); if (n && text != null) n.textContent = text; };
+      set("hero-name", profile.name);
+      set("hero-accent", profile.nameAccent);
+      set("hero-title", profile.title);
+      const full = [profile.name, profile.nameAccent].filter(Boolean).join(" ");
+      set("hero-initials", full.split(/\s+/).slice(0, 2).map((w) => w[0] || "").join("").toUpperCase());
+      const note = document.getElementById("hero-note");
+      if (note && profile.tagline != null) {
+        note.innerHTML = "";
+        profile.tagline.split("\n").forEach((line, i) => {
+          if (i) note.appendChild(el("br"));
+          note.appendChild(document.createTextNode(line));
+        });
+      }
+      const photo = document.getElementById("hero-photo");
+      const src = safeUrl(profile.photo);
+      if (photo && src) { photo.src = src; photo.alt = "Portrait of " + full; }
+      if (profile.about) richText(document.getElementById("about-text"), profile.about);
+      [["social-github", profile.github], ["gh-title", profile.github],
+       ["social-linkedin", profile.linkedin], ["contact-linkedin", profile.linkedin]].forEach(([id, url]) => {
+        const a = document.getElementById(id);
+        const u = safeUrl(url);
+        if (a && u && /^https:/.test(u)) a.href = u;
+      });
+      if (full) document.title = full + " — Portfolio";
+    }
+
+    if (Array.isArray(education)) {
+      const list = document.getElementById("education-list");
+      const icon = list.querySelector(".timeline__icon");
+      list.innerHTML = "";
+      education.forEach((e) => {
+        const li = el("li", "timeline__item");
+        li.appendChild(icon ? icon.cloneNode(true) : el("div", "timeline__icon"));
+        const body = el("div", "timeline__body");
+        body.appendChild(el("h3", null, e.school));
+        const meta = [e.dates, e.place].filter(Boolean).join(" • ");
+        if (meta) body.appendChild(el("p", "meta", meta));
+        if (e.degree) body.appendChild(el("p", null, e.degree));
+        li.appendChild(body);
+        list.appendChild(li);
+      });
+      document.getElementById("education").hidden = !education.length;
+    }
+  }
+
   loadContent()
-    .then(({ skills = [], projects = [] }) => {
+    .then(({ profile, education, skills = [], projects = [] }) => {
+      renderProfile(profile, education);
       skills.forEach((s) => {
         const li = el("li", "chip");
         const src = iconUrl(s.icon);

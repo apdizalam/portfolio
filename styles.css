@@ -907,3 +907,6 @@ button.btn { cursor: pointer; font-family: inherit; }
   color: #fff; background: var(--accent-strong);
 }
 @media (max-width: 520px) { .app-card { flex-direction: column; } }
+.about__text p + p { margin-top: 10px; }
+.admin-avatar { width: 88px; height: 88px; border-radius: 16px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border); background: var(--surface-2); }
+.admin-edu { align-items: flex-start; }

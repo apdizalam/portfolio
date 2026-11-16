@@ -6,7 +6,7 @@
   let token = "";
   try { token = sessionStorage.getItem("admin-token") || ""; } catch (e) {}
 
-  let content = { skills: [], projects: [] };
+  let content = { profile: {}, education: [], skills: [], projects: [] };
   let uploads = {};        // slug -> { path, data }
   let dirty = false;
   let editing = null;      // slug being edited, or null for new
@@ -53,7 +53,7 @@
   function logout(msg) {
     token = "";
     try { sessionStorage.removeItem("admin-token"); } catch (e) {}
-    $("dash-view").hidden = $("tab-projects").hidden = $("tab-skills").hidden = $("publish-bar").hidden = true;
+    $("dash-view").hidden = $("tab-projects").hidden = $("tab-skills").hidden = $("tab-profile").hidden = $("publish-bar").hidden = true;
     $("login-view").hidden = false;
     status("login-status", msg || "", msg ? "error" : "");
   }
@@ -69,7 +69,13 @@
     status("publish-status", "Loading content from GitHub…");
     try {
       const data = await api("content");
-      content = { skills: data.content.skills || [], projects: data.content.projects || [] };
+      content = {
+        profile: data.content.profile || {},
+        education: data.content.education || [],
+        skills: data.content.skills || [],
+        projects: data.content.projects || [],
+      };
+      fillProfile();
       setDirty(false);
       showTab("projects");
       render();
@@ -84,6 +90,7 @@
     document.querySelectorAll("[data-tab]").forEach((b) => b.classList.toggle("is-active", b.dataset.tab === name));
     $("tab-projects").hidden = name !== "projects";
     $("tab-skills").hidden = name !== "skills";
+    $("tab-profile").hidden = name !== "profile";
   }
 
   function setDirty(v) {
@@ -107,6 +114,79 @@
     b.addEventListener("click", fn);
     return b;
   };
+
+  // ---------------------------------------------------------------- profile
+  function fillProfile() {
+    document.querySelectorAll("#profile-form [data-key]").forEach((input) => {
+      input.value = content.profile[input.dataset.key] || "";
+    });
+    const prev = (uploads.__profile && uploads.__profile.preview) || safeUrl(content.profile.photo);
+    $("pr-photo-preview").src = prev || "assets/profile.jpg";
+    renderEducation();
+  }
+
+  document.querySelectorAll("#profile-form [data-key]").forEach((input) => {
+    input.addEventListener("input", () => {
+      content.profile[input.dataset.key] = input.value;
+      setDirty(true);
+    });
+  });
+
+  $("pr-photo").addEventListener("change", async () => {
+    const file = $("pr-photo").files[0];
+    if (!file) return;
+    try {
+      const img = await compress(file, 800);
+      const path = `assets/profile/photo-${Date.now().toString(36)}.${img.ext}`;
+      uploads.__profile = { path, data: img.data, preview: img.preview };
+      content.profile.photo = path;
+      $("pr-photo-preview").src = img.preview;
+      setDirty(true);
+    } catch (err) {
+      status("publish-status", "That photo couldn't be read. Try a PNG or JPG.", "error");
+    }
+  });
+
+  function renderEducation() {
+    const box = $("education-editor");
+    box.innerHTML = "";
+    if (!content.education.length) box.appendChild(el("p", "hint", "No education entries."));
+    content.education.forEach((e, i) => {
+      const row = el("div", "admin-item admin-edu");
+      const grid = el("div", "admin-grid");
+      grid.style.flex = "1";
+      [["school", "School / University"], ["degree", "Degree"], ["dates", "Dates (e.g. Jul 2022 – Sep 2026)"], ["place", "City"]].forEach(([key, label]) => {
+        const field = el("div", "field");
+        const id = `edu-${i}-${key}`;
+        const lab = el("label", null, label);
+        lab.htmlFor = id;
+        const input = el("input");
+        input.id = id;
+        input.maxLength = 160;
+        input.value = e[key] || "";
+        input.addEventListener("input", () => { e[key] = input.value; setDirty(true); });
+        field.append(lab, input);
+        grid.appendChild(field);
+      });
+      const actions = el("div", "admin-item__actions");
+      actions.appendChild(button("Delete", "btn-danger", () => {
+        if (!confirm("Remove this education entry?")) return;
+        content.education.splice(i, 1);
+        setDirty(true);
+        renderEducation();
+      }));
+      row.append(grid, actions);
+      box.appendChild(row);
+    });
+  }
+
+  $("add-education").addEventListener("click", () => {
+    content.education.push({ school: "", degree: "", dates: "", place: "" });
+    setDirty(true);
+    renderEducation();
+    const first = document.getElementById(`edu-${content.education.length - 1}-school`);
+    if (first) first.focus();
+  });
 
   function render() {
     const list = $("project-list");
@@ -233,11 +313,11 @@
     }
   });
 
-  function compress(file) {
+  function compress(file, maxWidth = 1600) {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
-        const scale = Math.min(1, 1600 / img.width);
+        const scale = Math.min(1, maxWidth / img.width);
         const c = document.createElement("canvas");
         c.width = Math.round(img.width * scale);
         c.height = Math.round(img.height * scale);
@@ -313,7 +393,7 @@
     status("publish-status", "Publishing to GitHub…");
     try {
       const list = Object.values(uploads)
-        .filter((u) => content.projects.some((p) => p.image === u.path))
+        .filter((u) => content.projects.some((p) => p.image === u.path) || content.profile.photo === u.path)
         .map(({ path, data }) => ({ path, data }));
       await api("publish", { method: "POST", body: { content, uploads: list } });
       uploads = {};

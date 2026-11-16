@@ -47,10 +47,63 @@
         <div class="admin-head">
           <h1>Portfolio admin</h1>
           <div class="admin-tabs" role="tablist">
+            <button type="button" data-tab="profile" role="tab">Profile</button>
             <button type="button" class="is-active" data-tab="projects" role="tab">Projects</button>
             <button type="button" data-tab="skills" role="tab">Skills</button>
             <button type="button" class="btn-plain" id="logout">Log out</button>
           </div>
+        </div>
+      </section>
+
+      <!-- Profile tab -->
+      <section id="tab-profile" class="section" hidden>
+        <form class="card admin-card" id="profile-form" onsubmit="return false">
+          <h2 class="section__title">Profile</h2>
+          <div class="admin-row" style="align-items:center">
+            <img id="pr-photo-preview" class="admin-avatar" alt="Profile photo" />
+            <div class="field">
+              <label for="pr-photo">Profile photo</label>
+              <input id="pr-photo" type="file" accept="image/png,image/jpeg,image/webp" />
+              <span class="hint">A square photo looks best.</span>
+            </div>
+          </div>
+          <div class="admin-grid">
+            <div class="field">
+              <label for="pr-name">Name</label>
+              <input id="pr-name" data-key="name" maxlength="80" />
+            </div>
+            <div class="field">
+              <label for="pr-accent">Highlighted name <span class="optional">(shown in green)</span></label>
+              <input id="pr-accent" data-key="nameAccent" maxlength="60" />
+            </div>
+            <div class="field field--full">
+              <label for="pr-title">Job title</label>
+              <input id="pr-title" data-key="title" maxlength="120" />
+            </div>
+            <div class="field field--full">
+              <label for="pr-tagline">Handwritten note <span class="optional">(next to your photo, new line = Enter)</span></label>
+              <textarea id="pr-tagline" data-key="tagline" rows="2" maxlength="80"></textarea>
+            </div>
+            <div class="field field--full">
+              <label for="pr-about">About me</label>
+              <textarea id="pr-about" data-key="about" rows="6" maxlength="3000"></textarea>
+              <span class="hint">Wrap words in **double stars** to make them bold. Leave an empty line to start a new paragraph.</span>
+            </div>
+            <div class="field">
+              <label for="pr-github">GitHub link</label>
+              <input id="pr-github" data-key="github" type="url" maxlength="300" />
+            </div>
+            <div class="field">
+              <label for="pr-linkedin">LinkedIn link</label>
+              <input id="pr-linkedin" data-key="linkedin" type="url" maxlength="300" />
+            </div>
+          </div>
+        </form>
+
+        <div class="card admin-card" style="margin-top:16px">
+          <h2 class="section__title">Education</h2>
+          <div class="admin-list" id="education-editor"></div>
+          <button type="button" class="btn btn--outline" id="add-education" style="align-self:flex-start">+ Add education</button>
         </div>
       </section>
 
