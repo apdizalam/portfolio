@@ -22,6 +22,19 @@ const NAV = [
   { href: "/admin/messages", label: "Messages", Icon: DashInboxIcon },
 ];
 
+const DEFAULT_PHOTO = "/assets/profile/photo-mwjbzfjf.webp";
+
+/* Same backdrop as the portfolio: two blurred emerald glows + dotted pattern */
+function Backdrop() {
+  return (
+    <div className="dash-bg" aria-hidden="true">
+      <div className="dash-bg__glow dash-bg__glow--left" />
+      <div className="dash-bg__glow dash-bg__glow--right" />
+      <div className="dash-bg__dots" />
+    </div>
+  );
+}
+
 function useAdminTheme() {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   useEffect(() => {
@@ -62,6 +75,15 @@ export default function AdminShell({ children, configured }: { children: React.R
   }, []);
   useEffect(() => { if (state === "ok") refreshUnread(); }, [state, refreshUnread]);
 
+  const [me, setMe] = useState({ name: "Abdisalam Mohamed", photo: DEFAULT_PHOTO });
+  useEffect(() => {
+    if (state !== "ok") return;
+    db().from("profile").select("name, photo_url").eq("id", 1).maybeSingle().then(({ data }) => {
+      if (!data) return;
+      setMe({ name: data.name || "Abdisalam Mohamed", photo: data.photo_url || DEFAULT_PHOTO });
+    });
+  }, [state]);
+
   if (!configured) {
     return <LoginFrame theme={theme}><h1>Admin not connected</h1><p>Add your Supabase URL and publishable key to the environment variables.</p></LoginFrame>;
   }
@@ -82,10 +104,14 @@ export default function AdminShell({ children, configured }: { children: React.R
   return (
     <AdminCtx.Provider value={{ email: session?.user.email || "", unread, refreshUnread }}>
       <div className="dash" data-admin-theme={theme}>
+        <Backdrop />
         <aside className="dash-side">
           <div className="dash-brand">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m8 7-5 5 5 5" /><path d="m16 7 5 5-5 5" /><path d="m14 4-4 16" /></svg>
-            Portfolio admin
+            <img className="dash-brand__photo" src={me.photo} alt="" />
+            <div className="dash-brand__text">
+              <b>{me.name}</b>
+              <span>Portfolio admin</span>
+            </div>
           </div>
           <nav className="dash-nav" aria-label="Admin">
             {NAV.map(({ href, label, Icon }) => (
@@ -117,7 +143,9 @@ export default function AdminShell({ children, configured }: { children: React.R
 function LoginFrame({ children, theme }: { children: React.ReactNode; theme: string }) {
   return (
     <div className="dash dash-login" data-admin-theme={theme} style={{ display: "grid" }}>
+      <Backdrop />
       <div className="d-card">
+        <img className="dash-login__photo" src={DEFAULT_PHOTO} alt="" />
         {children}
         <Link href="/" className="d-back">← Back to portfolio</Link>
       </div>
