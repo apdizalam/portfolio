@@ -9,7 +9,7 @@ import SkillChip from "@/components/SkillChip";
 import ProjectsGrid from "@/components/ProjectsGrid";
 import ContactForm from "@/components/ContactForm";
 import BottomNav from "@/components/BottomNav";
-import { CapIcon } from "@/components/Icons";
+import ExperienceTimeline from "@/components/ExperienceTimeline";
 
 // Rebuilt at most every 5 minutes, and immediately after admin edits.
 export const revalidate = 300;
@@ -21,7 +21,7 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const { profile, education, skills } = await getContent();
+  const { profile, education, experience, skills } = await getContent();
   const projects = await getFeaturedProjects();
   const allCount = (await getPublishedProjects()).length;
   const contributions = await getContributions(GITHUB_USER);
@@ -42,21 +42,10 @@ export default async function Home() {
           <GitHubActivity data={contributions} profileUrl={isHttps(profile.github) ? profile.github : `https://github.com/${GITHUB_USER}`} />
         </Reveal>
 
-        {education.length > 0 && (
-          <Reveal id="education" className="section">
-            <h2 className="section__title">Education</h2>
-            <ol className="timeline">
-              {education.map((e) => (
-                <li key={e.id} className="timeline__item">
-                  <div className="timeline__icon"><CapIcon /></div>
-                  <div className="timeline__body">
-                    <h3>{e.school}</h3>
-                    {(e.dates || e.place) && <p className="meta">{[e.dates, e.place].filter(Boolean).join(" • ")}</p>}
-                    {e.degree && <p>{e.degree}</p>}
-                  </div>
-                </li>
-              ))}
-            </ol>
+        {(experience.length > 0 || education.length > 0) && (
+          <Reveal id="experience" className="section">
+            <h2 className="section__title">{experience.length ? "Experience & Education" : "Education"}</h2>
+            <ExperienceTimeline experience={experience} education={education} />
           </Reveal>
         )}
 

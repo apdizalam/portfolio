@@ -2,13 +2,14 @@ import "server-only";
 import { cache } from "react";
 import { publicClient } from "./supabase/public";
 import { supabaseConfigured } from "./supabase/env";
-import type { Contributions, Education, Profile, Project, Skill } from "./types";
+import type { Contributions, Education, Experience, Profile, Project, Skill } from "./types";
 import fallbackContent from "@/data/content.json";
 import fallbackContributions from "@/data/github-contributions.json";
 
 export type SiteContent = {
   profile: Profile;
   education: Education[];
+  experience: Experience[];
   skills: Skill[];
   projects: Project[];
   source: "supabase" | "fallback";
@@ -31,6 +32,7 @@ function fromJson(): SiteContent {
       github: c.profile.github,
       linkedin: c.profile.linkedin,
     },
+    experience: [],
     education: (c.education || []).map((e: any, i: number) => ({ id: i + 1, sort: i, ...e })),
     skills: c.skills.map((s: any, i: number) => ({ id: i + 1, sort: i, name: s.name, icon: s.icon })),
     projects: c.projects.map((p: any, i: number) => ({
@@ -55,11 +57,12 @@ function fromJson(): SiteContent {
 export const getContent = cache(async (): Promise<SiteContent> => {
   if (!supabaseConfigured) return fromJson();
   const db = publicClient();
-  const [profile, education, skills, projects] = await Promise.all([
+  const [profile, education, skills, projects, experience] = await Promise.all([
     db.from("profile").select("*").eq("id", 1).maybeSingle(),
     db.from("education").select("*").order("sort").order("id"),
     db.from("skills").select("*").order("sort").order("id"),
     db.from("projects").select("*").order("sort").order("id"),
+    db.from("experience").select("*").order("sort").order("id"),
   ]);
   const err = profile.error || education.error || skills.error || projects.error;
   if (err) {
@@ -71,6 +74,8 @@ export const getContent = cache(async (): Promise<SiteContent> => {
     source: "supabase",
     profile: (profile.data as Profile) || fb.profile,
     education: (education.data as Education[]) || [],
+    // experience is optional: if its table is missing, the rest of the site still loads
+    experience: experience.error ? [] : ((experience.data as Experience[]) || []),
     skills: (skills.data as Skill[]) || [],
     projects: (projects.data as Project[]) || [],
   };

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import type { Session } from "@supabase/supabase-js";
 import { db } from "./helpers";
 import {
-  DashEducationIcon, DashInboxIcon, DashOverviewIcon, DashProfileIcon, DashProjectsIcon,
+  DashEducationIcon, DashExperienceIcon, DashInboxIcon, DashOverviewIcon, DashProfileIcon, DashProjectsIcon,
   DashSkillsIcon, ExternalIcon, LogoutIcon, MoonIcon, SunIcon,
 } from "../Icons";
 
@@ -17,6 +17,7 @@ const NAV = [
   { href: "/admin", label: "Overview", Icon: DashOverviewIcon },
   { href: "/admin/profile", label: "Profile", Icon: DashProfileIcon },
   { href: "/admin/skills", label: "Skills", Icon: DashSkillsIcon },
+  { href: "/admin/experience", label: "Experience", Icon: DashExperienceIcon },
   { href: "/admin/education", label: "Education", Icon: DashEducationIcon },
   { href: "/admin/projects", label: "Projects", Icon: DashProjectsIcon },
   { href: "/admin/messages", label: "Messages", Icon: DashInboxIcon },

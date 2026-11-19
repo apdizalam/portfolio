@@ -1187,3 +1187,20 @@ html, body { font-family: var(--font); }
   .gallery__item, .gallery__item img { transition: none; }
   .gallery__item:hover, .gallery__item:hover img { transform: none; }
 }
+
+/* =========================================================
+   Experience & Education timeline
+   ========================================================= */
+.xp { gap: 22px; }
+.xp .timeline__item { padding-bottom: 2px; }
+.xp .timeline__item:not(:last-child)::after { bottom: -24px; }
+.timeline__icon svg { width: 20px; height: 20px; }
+.timeline__icon--logo { padding: 0; overflow: hidden; background: #fff; }
+.timeline__icon--logo img { width: 100%; height: 100%; object-fit: contain; }
+.xp__company { font-size: 12.5px; color: var(--text); opacity: 0.9; margin-top: 1px; }
+.xp .meta { margin-top: 2px; }
+.xp__desc { margin-top: 8px !important; font-size: 12.5px; line-height: 1.6; color: var(--muted) !important; opacity: 1 !important; }
+.xp__more { padding: 0; border: 0; background: none; font: inherit; font-weight: 600; color: var(--accent); cursor: pointer; }
+.xp__more:hover { text-decoration: underline; }
+.xp__skills { display: flex; align-items: flex-start; gap: 6px; margin-top: 8px !important; font-size: 12px; font-weight: 600; color: var(--text) !important; }
+.xp__skills svg { width: 14px; height: 14px; margin-top: 2px; flex-shrink: 0; color: var(--accent); }

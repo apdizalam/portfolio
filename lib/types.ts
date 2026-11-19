@@ -25,6 +25,20 @@ export type Education = {
   sort: number;
 };
 
+export type Experience = {
+  id: number;
+  role: string;
+  company: string;
+  employment_type: string;
+  period: string;
+  location: string;
+  work_mode: string;
+  description: string;
+  skills: string[];
+  logo_url: string;
+  sort: number;
+};
+
 export type Skill = {
   id: number;
   name: string;
