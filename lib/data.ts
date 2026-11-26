@@ -49,6 +49,13 @@ function fromJson(): SiteContent {
       date: p.date || "",
       app_link: p.appLink || "",
       app_note: p.appNote || "",
+      subtitle: p.subtitle || "",
+      problem: p.problem || "",
+      solution: p.solution || "",
+      features: p.features || "",
+      showcase_url: img(p.showcase || ""),
+      featured: p.featured !== false,
+      published: p.published !== false,
     })),
   };
 }

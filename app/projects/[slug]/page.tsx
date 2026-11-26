@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getContent, getProject } from "@/lib/data";
 import { getProjectReadme } from "@/lib/readme";
 import Gallery from "@/components/Gallery";
+import ShowcaseImage from "@/components/ShowcaseImage";
+import SkillChip from "@/components/SkillChip";
 import { repoPath, safeUrl, isHttps } from "@/lib/utils";
 import BottomNav from "@/components/BottomNav";
 import RichText from "@/components/RichText";
@@ -32,6 +34,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const shots = readme?.groups.reduce((n, g) => n + g.images.length, 0) || 0;
   const cover = safeUrl(project.image_url);
   const live = safeUrl(project.live);
+  const showcase = safeUrl(project.showcase_url);
+  const features = parseFeatures(project.features || "");
   const steps = (project.app_note || "Open this link on your phone and tap Install.").split("\n").map((s) => s.trim()).filter(Boolean);
 
   return (
@@ -42,24 +46,78 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
         <section className="pd-hero">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {cover && <img className="pd-cover" src={cover} alt={`${project.title} screenshot`} />}
+          {cover && !showcase && <img className="pd-cover" src={cover} alt={`${project.title} screenshot`} />}
+          {showcase && project.categories.length > 0 && <p className="pd-eyebrow">{project.categories.join(" · ")}</p>}
           <h1 className="pd-title">{project.title}</h1>
+          {project.subtitle && <p className="pd-subtitle">{project.subtitle}</p>}
           {project.summary && <p className="pd-summary">{project.summary}</p>}
-          {project.tags.length > 0 && (
+          {!showcase && project.tags.length > 0 && (
             <ul className="pd-tags">{project.tags.map((t) => <li key={t}>{t}</li>)}</ul>
           )}
           <div className="pd-actions">
+            {showcase && isHttps(project.app_link) && (
+              <a className="btn btn--solid" href={project.app_link} target="_blank" rel="noopener"><PhoneIcon /> Download Android APK</a>
+            )}
             {live && /^https?:/.test(live) && (
-              <a className="btn btn--solid" href={live} target="_blank" rel="noopener">Live Demo <span aria-hidden="true">→</span></a>
+              <a className={`btn ${showcase && isHttps(project.app_link) ? "btn--outline" : "btn--solid"}`} href={live} target="_blank" rel="noopener">
+                {showcase ? "Visit Project Website" : "Live Demo"} <span aria-hidden="true">→</span>
+              </a>
             )}
             {repo && (
               <a className="btn btn--outline" href={`https://github.com/${repo}`} target="_blank" rel="noopener"><GithubIcon /> View Code</a>
             )}
-            {isHttps(project.app_link) && (
+            {!showcase && isHttps(project.app_link) && (
               <a className="btn btn--outline" href={project.app_link} target="_blank" rel="noopener"><PhoneIcon /> Mobile App</a>
             )}
           </div>
         </section>
+
+        {showcase && (
+          <section className="section" aria-label={`${project.title} app screens`}>
+            <ShowcaseImage src={showcase} alt={`${project.title} app screens`} />
+          </section>
+        )}
+
+        {(project.problem || project.solution) && (
+          <section className="section">
+            <div className="ps-grid">
+              {project.problem && (
+                <article className="card ps-card">
+                  <h2 className="section__title">The problem</h2>
+                  <RichText text={project.problem} />
+                </article>
+              )}
+              {project.solution && (
+                <article className="card ps-card ps-card--solution">
+                  <h2 className="section__title">The solution</h2>
+                  <RichText text={project.solution} />
+                </article>
+              )}
+            </div>
+          </section>
+        )}
+
+        {features.length > 0 && (
+          <section className="section">
+            <h2 className="section__title">Key features</h2>
+            <ul className="feature-grid">
+              {features.map((f, i) => (
+                <li key={i} className="card feature">
+                  <span className="feature__num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                  <h3>{f.title}</h3>
+                  {f.text && <p>{f.text}</p>}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {showcase && project.tags.length > 0 && (
+          <section className="section">
+            <h2 className="section__title">Technology stack</h2>
+            <ul className="chips">{project.tags.map((t) => <SkillChip key={t} name={t} icon={techIcon(t)} />)}</ul>
+          </section>
+        )}
 
         {isHttps(project.app_link) && (
           <section className="section">
@@ -75,16 +133,18 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </section>
         )}
 
-        <section className="section">
-          <h2 className="section__title">Overview</h2>
-          <article className="card readme">
-            {readme?.overview ? (
-              <div dangerouslySetInnerHTML={{ __html: readme.overview }} />
-            ) : (
-              <RichText text={project.summary || ""} />
-            )}
-          </article>
-        </section>
+        {(readme?.overview || !showcase) && (
+          <section className="section">
+            <h2 className="section__title">Overview</h2>
+            <article className="card readme">
+              {readme?.overview ? (
+                <div dangerouslySetInnerHTML={{ __html: readme.overview }} />
+              ) : (
+                <RichText text={project.summary || ""} />
+              )}
+            </article>
+          </section>
+        )}
 
         {shots > 0 && (
           <section className="section">
@@ -102,7 +162,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </section>
         )}
 
-        {repo && (
+        {repo && (readme?.overview || readme?.features) && (
           <p className="readme-more">
             Want the technical details (setup, architecture, API)?{" "}
             <a href={`https://github.com/${repo}#readme`} target="_blank" rel="noopener">Read the full README on GitHub →</a>
@@ -112,4 +172,26 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       <BottomNav />
     </>
   );
+}
+
+/** "Title: description" per line -> [{ title, text }] */
+function parseFeatures(text: string) {
+  return text
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((l) => {
+      const i = l.indexOf(":");
+      return i > 0 ? { title: l.slice(0, i).trim(), text: l.slice(i + 1).trim() } : { title: l, text: "" };
+    });
+}
+
+/** devicon names for common technologies (unknown ones show the name only) */
+function techIcon(name: string) {
+  const map: Record<string, string> = {
+    "react native": "react", react: "react", expo: "expo", typescript: "typescript", javascript: "javascript",
+    "node.js": "nodejs", mongodb: "mongodb", vite: "vitejs", "next.js": "nextjs",
+    postgresql: "postgresql", supabase: "supabase", tailwind: "tailwindcss", git: "git", github: "github",
+  };
+  return map[name.toLowerCase()] || "";
 }

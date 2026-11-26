@@ -64,6 +64,11 @@ export type Project = {
   published?: boolean;
   views?: number;
   updated_at?: string;
+  subtitle?: string;
+  problem?: string;
+  solution?: string;
+  features?: string;      // one per line: "Title: description"
+  showcase_url?: string;  // full image shown uncropped on the project page
 };
 
 export type Message = {

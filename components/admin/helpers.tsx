@@ -72,7 +72,7 @@ export async function uploadFile(file: File, folder: string, name: string) {
 /** Friendly message when the dashboard SQL update hasn't been run yet. */
 export function dbError(msg: string) {
   if (/column .* does not exist|could not find the .* column/i.test(msg)) {
-    return "Your database needs the dashboard update. Run supabase/migrations/002_dashboard.sql in Supabase → SQL Editor.";
+    return "Your database needs the latest update. Run the newest file in supabase/migrations (004_project_showcase.sql) in Supabase → SQL Editor.";
   }
   return msg;
 }
