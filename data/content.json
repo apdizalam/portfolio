@@ -85,23 +85,36 @@
     {
       "slug": "shaba-billing-system",
       "title": "Shaba Water Billing System",
-      "summary": "Water billing management system with mobile app for Shaba Water.",
+      "summary": "Shaba Water Billing System is a full-stack water-utility platform for managing customers, meter readings, bills and payments, with a mobile app for customers and a web dashboard for administrators and managers.",
       "repo": "shaba-billing-system",
       "live": "https://shaba-billing-system.vercel.app",
       "image": "assets/shaba.png",
       "tags": [
-        "JavaScript",
+        "React Native",
+        "Expo",
         "React",
+        "Vite",
         "Node.js",
-        "MongoDB"
+        "Express",
+        "MongoDB",
+        "Mongoose",
+        "React Navigation",
+        "React Router",
+        "Axios",
+        "AsyncStorage"
       ],
       "categories": [
+        "Full-stack",
         "Web App",
         "Mobile App"
       ],
       "date": "Jun 2026",
       "appLink": "https://expo.dev/accounts/abdisalam-mohamed/projects/forntend/builds/4cbbbf48-9d18-4ffe-b126-681b5a2d51f2",
-      "appNote": "Open this link on your Android phone (or scan the QR code on the page with your phone camera).\nTap Install to download the app file (APK).\nOpen the downloaded file. If Android asks, allow installing apps from this source.\nTap Install, then open the Shaba app and sign in."
+      "appNote": "Open this link on your Android phone (or scan the QR code on the page with your phone camera).\nTap Install to download the app file (APK).\nOpen the downloaded file. If Android asks, allow installing apps from this source.\nTap Install, then open the Shaba app and sign in.",
+      "subtitle": "Water-utility billing and customer management",
+      "problem": "A water utility has to keep track of many customers, their meters, monthly readings, bills and payments. When that information is spread across paper records and separate files, billing is slow, mistakes are easy to make and it is hard to see who has paid and who still owes.\n\nCustomers also have no simple way to check their own bills, see what is unpaid or look back at their payment history.",
+      "solution": "Shaba Water Billing System brings everything into one connected platform. Administrators and managers use a web dashboard to manage customers, meters, billing, reports and manager accounts, while customers use a mobile app to sign in and see their bills, unpaid amounts, payments and payment history.\n\nBoth apps talk to the same Express REST API, which stores customers, managers, meters, bills and payments in MongoDB, so staff and customers always see the same up-to-date information.",
+      "features": "Customer Mobile App: Customers sign in from their phone to see their bills, profile and account details in one place.\nBills & Unpaid Balances: Shows each customer's bills and highlights what is still unpaid.\nPayments & History: Records payments and lets customers look back at their full payment history.\nAdmin Dashboard: A web dashboard for managing customers, meters and billing, with dashboard statistics and transactions.\nMeters & Billing: Track meters and readings and turn them into bills for each customer.\nReports & Manager Accounts: Billing reports for the utility, plus separate administrator and manager accounts with token-based sign-in."
     },
     {
       "slug": "tayonx",

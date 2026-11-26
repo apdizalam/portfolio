@@ -5,6 +5,7 @@ import { getProjectReadme } from "@/lib/readme";
 import Gallery from "@/components/Gallery";
 import ShowcaseImage from "@/components/ShowcaseImage";
 import SkillChip from "@/components/SkillChip";
+import AnimatedCard from "@/components/AnimatedCard";
 import { repoPath, safeUrl, isHttps } from "@/lib/utils";
 import BottomNav from "@/components/BottomNav";
 import RichText from "@/components/RichText";
@@ -36,6 +37,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const live = safeUrl(project.live);
   const showcase = safeUrl(project.showcase_url);
   const features = parseFeatures(project.features || "");
+  const detailed = Boolean(showcase || project.problem || project.solution || features.length);
   const steps = (project.app_note || "Open this link on your phone and tap Install.").split("\n").map((s) => s.trim()).filter(Boolean);
 
   return (
@@ -51,22 +53,22 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <h1 className="pd-title">{project.title}</h1>
           {project.subtitle && <p className="pd-subtitle">{project.subtitle}</p>}
           {project.summary && <p className="pd-summary">{project.summary}</p>}
-          {!showcase && project.tags.length > 0 && (
+          {!detailed && project.tags.length > 0 && (
             <ul className="pd-tags">{project.tags.map((t) => <li key={t}>{t}</li>)}</ul>
           )}
           <div className="pd-actions">
-            {showcase && isHttps(project.app_link) && (
+            {detailed && isHttps(project.app_link) && (
               <a className="btn btn--solid" href={project.app_link} target="_blank" rel="noopener"><PhoneIcon /> Download Android APK</a>
             )}
             {live && /^https?:/.test(live) && (
-              <a className={`btn ${showcase && isHttps(project.app_link) ? "btn--outline" : "btn--solid"}`} href={live} target="_blank" rel="noopener">
-                {showcase ? "Visit Project Website" : "Live Demo"} <span aria-hidden="true">→</span>
+              <a className={`btn ${detailed && isHttps(project.app_link) ? "btn--outline" : "btn--solid"}`} href={live} target="_blank" rel="noopener">
+                {detailed ? "Visit Project Website" : "Live Demo"} <span aria-hidden="true">→</span>
               </a>
             )}
             {repo && (
               <a className="btn btn--outline" href={`https://github.com/${repo}`} target="_blank" rel="noopener"><GithubIcon /> View Code</a>
             )}
-            {!showcase && isHttps(project.app_link) && (
+            {!detailed && isHttps(project.app_link) && (
               <a className="btn btn--outline" href={project.app_link} target="_blank" rel="noopener"><PhoneIcon /> Mobile App</a>
             )}
           </div>
@@ -82,16 +84,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <section className="section">
             <div className="ps-grid">
               {project.problem && (
-                <article className="card ps-card">
+                <AnimatedCard className="card ps-card" index={0}>
                   <h2 className="section__title">The problem</h2>
                   <RichText text={project.problem} />
-                </article>
+                </AnimatedCard>
               )}
               {project.solution && (
-                <article className="card ps-card ps-card--solution">
+                <AnimatedCard className="card ps-card ps-card--solution" index={1}>
                   <h2 className="section__title">The solution</h2>
                   <RichText text={project.solution} />
-                </article>
+                </AnimatedCard>
               )}
             </div>
           </section>
@@ -102,17 +104,17 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             <h2 className="section__title">Key features</h2>
             <ul className="feature-grid">
               {features.map((f, i) => (
-                <li key={i} className="card feature">
+                <AnimatedCard as="li" key={i} className="card feature" index={i}>
                   <span className="feature__num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
                   <h3>{f.title}</h3>
                   {f.text && <p>{f.text}</p>}
-                </li>
+                </AnimatedCard>
               ))}
             </ul>
           </section>
         )}
 
-        {showcase && project.tags.length > 0 && (
+        {detailed && project.tags.length > 0 && (
           <section className="section">
             <h2 className="section__title">Technology stack</h2>
             <ul className="chips">{project.tags.map((t) => <SkillChip key={t} name={t} icon={techIcon(t)} />)}</ul>
@@ -133,7 +135,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </section>
         )}
 
-        {(readme?.overview || !showcase) && (
+        {!detailed && (
           <section className="section">
             <h2 className="section__title">Overview</h2>
             <article className="card readme">
@@ -191,7 +193,7 @@ function techIcon(name: string) {
   const map: Record<string, string> = {
     "react native": "react", react: "react", expo: "expo", typescript: "typescript", javascript: "javascript",
     "node.js": "nodejs", mongodb: "mongodb", vite: "vitejs", "next.js": "nextjs",
-    postgresql: "postgresql", supabase: "supabase", tailwind: "tailwindcss", git: "git", github: "github",
+    postgresql: "postgresql", supabase: "supabase", axios: "axios", "react router": "reactrouter", tailwind: "tailwindcss", git: "git", github: "github",
   };
   return map[name.toLowerCase()] || "";
 }

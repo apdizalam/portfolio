@@ -1276,3 +1276,14 @@ html, body { font-family: var(--font); }
 @media (prefers-reduced-motion: reduce) {
   .showcase, .showcase__hint { transition: none; }
 }
+
+/* Problem / solution and feature cards: hover glow (movement comes from Framer Motion) */
+.ps-card, .feature { transition: border-color 0.3s, box-shadow 0.3s; }
+.ps-card:hover, .feature:hover {
+  border-color: rgba(37, 217, 189, 0.45);
+  box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.6), 0 0 26px -10px rgba(37, 217, 189, 0.35);
+}
+.feature:hover .feature__num { background: var(--accent); color: #06231d; transition: background 0.25s, color 0.25s; }
+@media (prefers-reduced-motion: reduce) {
+  .ps-card, .feature, .feature__num { transition: none; }
+}
