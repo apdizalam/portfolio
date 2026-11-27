@@ -27,15 +27,25 @@ export default function ProjectsAdminPage() {
 
   async function toggle(p: Project, field: "featured" | "published", value: boolean) {
     setBusyId(p.id);
-    setList((l) => l.map((x) => (x.id === p.id ? { ...x, [field]: value } : x)));
-    const { error } = await db().from("projects").update({ [field]: value, updated_at: new Date().toISOString() }).eq("id", p.id);
+    st.info("Saving…");
+    // .select() returns the row as stored, so the switch shows the real saved value.
+    const { data, error } = await db()
+      .from("projects")
+      .update({ [field]: value, updated_at: new Date().toISOString() })
+      .eq("id", p.id)
+      .select("id, featured, published, updated_at");
     setBusyId(null);
-    if (error) {
-      setList((l) => l.map((x) => (x.id === p.id ? { ...x, [field]: !value } : x)));
-      return st.fail(dbError(error.message));
+    const saved = (data as Pick<Project, "id" | "featured" | "published" | "updated_at">[] | null)?.[0];
+    if (error || !saved) {
+      // nothing changed in the database (error, or no permission to update this row)
+      return st.fail(error ? dbError(error.message) : "Not saved: your account isn't allowed to change this project.");
     }
-    await refreshSite();
-    st.ok(`${p.title}: ${field === "featured" ? (value ? "shown on home page" : "hidden from home page") : value ? "published" : "unpublished"}.`);
+    setList((l) => l.map((x) => (x.id === p.id ? { ...x, ...saved } : x)));
+    const refreshed = await refreshSite();
+    const what = field === "featured"
+      ? (saved.featured ? "featured on the home page" : "removed from the home page (still on /projects if published)")
+      : (saved.published ? "published" : "unpublished — hidden from your public site");
+    st.ok(`${p.title}: ${what}.${refreshed ? "" : " The public site will catch up within a minute."}`);
   }
 
   async function saveOrder(next: Project[]) {

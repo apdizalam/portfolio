@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getContent, getProject } from "@/lib/data";
+import { getProject, getPublishedProjects } from "@/lib/data";
 import { getProjectReadme } from "@/lib/readme";
 import Gallery from "@/components/Gallery";
 import ShowcaseImage from "@/components/ShowcaseImage";
@@ -12,11 +12,11 @@ import RichText from "@/components/RichText";
 import { BackIcon, GithubIcon, PhoneIcon } from "@/components/Icons";
 import ViewCounter from "@/components/ViewCounter";
 
-export const revalidate = 300;
+export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const { projects } = await getContent();
-  return projects.map((p) => ({ slug: p.slug }));
+  // only published projects are pre-built; other slugs are checked on request (unpublished → 404)
+  return (await getPublishedProjects()).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {

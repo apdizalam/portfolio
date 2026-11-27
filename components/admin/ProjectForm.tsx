@@ -1,10 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Project } from "@/lib/types";
 import { GITHUB_USER, isHttps, safeUrl, slugify } from "@/lib/utils";
-import { db, dbError, refreshSite, splitList, uploadImage } from "./helpers";
+import { authHeaders, db, dbError, refreshSite, splitList, uploadImage } from "./helpers";
+import { mergeSuggestions, suggestionsFromRepo, type RepoMeta } from "@/lib/github";
+import { projectGroups } from "@/lib/projects";
 import { PageHead, StatusText, Switch, useStatus } from "./ui";
 import { ProjectCard } from "../ProjectsGrid";
 import { BackIcon } from "../Icons";
@@ -59,31 +61,55 @@ export default function ProjectForm({ id }: { id?: number }) {
     setD((x) => ({ ...x, [k]: v, ...(k === "title" && !slugTouched ? { slug: slugify(v) } : {}) }));
   };
 
-  async function fillFromGitHub() {
-    if (!d.repo.trim()) return st.fail("Type the repo name first.");
-    const full = d.repo.includes("/") ? d.repo.trim() : `${GITHUB_USER}/${d.repo.trim()}`;
-    st.info(`Reading ${full} from GitHub…`);
+  // ---- GitHub (via the admin-only /api/github route; tokens stay on the server)
+  const [repos, setRepos] = useState<{ name: string; description: string; private: boolean }[]>([]);
+  const [ghState, setGhState] = useState<"idle" | "loading" | "ok" | "error">("idle");
+  const [ghInfo, setGhInfo] = useState<RepoMeta | null>(null);
+  const lastFilled = useRef<Record<string, string>>({});
+  const latest = useRef(d);
+  latest.current = d;
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/github?list=1", { headers: await authHeaders() });
+        const json = await res.json();
+        if (res.ok) setRepos(json.repos || []);
+      } catch { /* the picker is optional; typing a name still works */ }
+    })();
+  }, []);
+
+  async function fetchFromGitHub(repoInput = d.repo) {
+    if (!repoInput.trim()) return st.fail("Choose or type a GitHub repository first.");
+    setGhState("loading");
+    st.info("Getting the repository from GitHub…");
     try {
-      const [info, langs] = await Promise.all([
-        fetch(`https://api.github.com/repos/${full}`).then((r) => { if (!r.ok) throw new Error("nf"); return r.json(); }),
-        fetch(`https://api.github.com/repos/${full}/languages`).then((r) => (r.ok ? r.json() : {})),
-      ]);
-      setD((x) => {
-        const title = x.title || info.name.replace(/[-_]+/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
-        return {
-          ...x,
-          repo: info.owner.login.toLowerCase() === GITHUB_USER.toLowerCase() ? info.name : info.full_name,
-          title,
-          slug: x.slug || slugify(info.name),
-          summary: x.summary || info.description || "",
-          live: x.live || info.homepage || "",
-          tags: x.tags || [...(info.topics || []), ...Object.keys(langs)].slice(0, 6).join(", "),
-          date: x.date || new Date(info.created_at).toLocaleDateString("en-US", { month: "short", year: "numeric" }),
-        };
-      });
-      st.ok("Filled from GitHub. Add a cover image, then save.");
-    } catch (e: any) {
-      st.fail(e.message === "nf" ? "Couldn't find that public repo." : "GitHub is busy, try again in a minute.");
+      const res = await fetch(`/api/github?repo=${encodeURIComponent(repoInput.trim())}`, { headers: await authHeaders() });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setGhState("error");
+        setGhInfo(null);
+        return st.fail(json.error?.message || "GitHub lookup failed. Try again in a moment.");
+      }
+      const meta = json.repo as RepoMeta;
+      setGhInfo(meta);
+      const suggested = suggestionsFromRepo(meta, GITHUB_USER);
+      const x = latest.current;
+      const current: Record<string, string> = { repo: "", title: x.title, slug: x.slug, summary: x.summary, live: x.live, tags: x.tags, date: x.date };
+      // the repo field always follows the chosen repository; other fields keep the admin's own text
+      const { next, changed, filled } = mergeSuggestions(current, suggested, lastFilled.current);
+      lastFilled.current = filled;
+      setD((prev) => ({ ...prev, ...next }));
+      if (changed.includes("slug")) setSlugTouched(false);
+      const names: Record<string, string> = { title: "title", slug: "URL slug", summary: "description", live: "website", tags: "tech stack", date: "date" };
+      const list = changed.filter((k) => k !== "repo").map((k) => names[k]).filter(Boolean);
+      setGhState("ok");
+      st.ok(list.length
+        ? `Filled from GitHub: ${list.join(", ")}. Your own text was kept.`
+        : "GitHub details loaded. Nothing to fill: your fields already have your own text.");
+    } catch {
+      setGhState("error");
+      st.fail("Couldn't reach GitHub. Check your connection and try again.");
     }
   }
 
@@ -110,8 +136,9 @@ export default function ProjectForm({ id }: { id?: number }) {
       };
       st.info("Saving…");
       if (id) {
-        const { error } = await db().from("projects").update(row).eq("id", id);
+        const { data: savedRows, error } = await db().from("projects").update(row).eq("id", id).select("id");
         if (error) throw new Error(error.message);
+        if (!savedRows?.length) throw new Error("Not saved: your account isn't allowed to change this project.");
       } else {
         const { count } = await db().from("projects").select("id", { count: "exact", head: true });
         const { error } = await db().from("projects").insert({ ...row, sort: count || 0 });
@@ -145,12 +172,42 @@ export default function ProjectForm({ id }: { id?: number }) {
         <p className="d-sub">The project page shows this repo&apos;s README (overview and pictures) automatically.</p>
         <div className="d-grid">
           <div className="d-field">
-            <label htmlFor="pf-repo">GitHub repo</label>
-            <input id="pf-repo" placeholder="e.g. Tayonx" maxLength={100} value={d.repo} onChange={set("repo")} />
+            <label htmlFor="pf-repo">GitHub repository</label>
+            <input
+              id="pf-repo"
+              list="pf-repo-list"
+              placeholder="Pick or type, e.g. Tayonx"
+              maxLength={200}
+              value={d.repo}
+              onChange={(e) => {
+                const v = e.target.value;
+                setD((x) => ({ ...x, repo: v }));
+                // picking one of your repositories from the list fetches it straight away
+                if (repos.some((r) => r.name === v)) fetchFromGitHub(v);
+              }}
+            />
+            <datalist id="pf-repo-list">{repos.map((r) => <option key={r.name} value={r.name}>{r.description}</option>)}</datalist>
+            <span className="d-hint">Name, owner/name or a GitHub link. Picking from the list fills the form automatically.</span>
           </div>
           <div className="d-field" style={{ justifyContent: "flex-end" }}>
-            <button type="button" className="d-btn" onClick={fillFromGitHub}>Fill from GitHub</button>
+            <button type="button" className="d-btn" onClick={() => fetchFromGitHub()} disabled={ghState === "loading"} aria-busy={ghState === "loading"}>
+              {ghState === "loading" ? "Getting from GitHub…" : id ? "Refresh from GitHub" : "Fill from GitHub"}
+            </button>
+            <span className="d-hint">Only fills empty fields, or ones GitHub filled before. Your edits are kept.</span>
           </div>
+          {ghInfo && (
+            <div className="d-field d-full">
+              <div className="d-card d-gh" role="status">
+                <b><a href={ghInfo.url} target="_blank" rel="noopener">{ghInfo.fullName}</a></b>
+                {ghInfo.isPrivate && <span className="d-pill">Private</span>}
+                {ghInfo.archived && <span className="d-pill">Archived</span>}
+                <span className="d-hint">
+                  {ghInfo.languages.slice(0, 5).join(" · ") || "No languages detected"}
+                  {ghInfo.pushedAt ? ` — last updated ${new Date(ghInfo.pushedAt).toLocaleDateString()}` : ""}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -164,7 +221,27 @@ export default function ProjectForm({ id }: { id?: number }) {
             <span className="d-hint">yoursite/projects/{slugify(d.slug || d.title) || "…"}</span>
           </div>
           <div className="d-field d-full"><label htmlFor="pf-summary">Short description</label><textarea id="pf-summary" rows={3} maxLength={400} value={d.summary} onChange={set("summary")} /></div>
-          <div className="d-field"><label htmlFor="pf-cats">Categories</label><input id="pf-cats" placeholder="Website, Mobile App" value={d.categories} onChange={set("categories")} /><span className="d-hint">Comma separated</span></div>
+          <div className="d-field">
+            <label htmlFor="pf-cats">Categories</label>
+            <input id="pf-cats" placeholder="Website, Mobile App" value={d.categories} onChange={set("categories")} />
+            <span className="d-hint">
+              Comma separated. Projects page filter: {(() => {
+                const g = projectGroups({ categories: splitList(d.categories) });
+                return g.length ? g.map((x) => (x === "applications" ? "Applications" : "Websites")).join(" + ") : "All only (add “Website” or “App”)";
+              })()}
+            </span>
+            <div className="d-row" style={{ marginTop: 4 }}>
+              {([["applications", "Application"], ["websites", "Website"]] as const).map(([group, word]) => {
+                const on = projectGroups({ categories: splitList(d.categories) }).includes(group);
+                return (
+                  <button key={group} type="button" className="d-btn d-btn--sm" aria-pressed={on} disabled={on}
+                    onClick={() => setD((x) => ({ ...x, categories: [...splitList(x.categories), word].join(", ") }))}>
+                    {on ? `✓ In ${group === "applications" ? "Applications" : "Websites"}` : `+ ${word}`}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
           <div className="d-field"><label htmlFor="pf-date">Date</label><input id="pf-date" placeholder="Jun 2026" maxLength={30} value={d.date} onChange={set("date")} /></div>
           <div className="d-field d-full"><label htmlFor="pf-tags">Tech stack</label><input id="pf-tags" placeholder="React, Node.js, MongoDB" value={d.tags} onChange={set("tags")} /><span className="d-hint">Comma separated</span></div>
         </div>

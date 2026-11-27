@@ -4,6 +4,7 @@ import { publicClient } from "./supabase/public";
 import { supabaseConfigured } from "./supabase/env";
 import type { Contributions, Education, Experience, Profile, Project, Skill } from "./types";
 import fallbackContent from "@/data/content.json";
+import { featuredProjects, findPublicProject, publishedProjects } from "./projects";
 import fallbackContributions from "@/data/github-contributions.json";
 
 export type SiteContent = {
@@ -68,13 +69,19 @@ export const getContent = cache(async (): Promise<SiteContent> => {
     db.from("profile").select("*").eq("id", 1).maybeSingle(),
     db.from("education").select("*").order("sort").order("id"),
     db.from("skills").select("*").order("sort").order("id"),
-    db.from("projects").select("*").order("sort").order("id"),
+    db.from("projects").select("*").eq("published", true).order("sort").order("id"),
     db.from("experience").select("*").order("sort").order("id"),
   ]);
   const err = profile.error || education.error || skills.error || projects.error;
   if (err) {
-    console.error("Supabase read failed, using fallback content:", err.message);
-    return fromJson();
+    if (process.env.NEXT_PHASE === "phase-production-build") {
+      // During a deploy build a hiccup should not fail the deploy; pages refresh within a minute.
+      console.error("Supabase read failed during build, using fallback content:", err.message);
+      return fromJson();
+    }
+    // At runtime, failing keeps the previously cached (correct) page instead of showing
+    // backup content in which unpublished projects could reappear.
+    throw new Error("Supabase read failed: " + err.message);
   }
   const fb = fromJson();
   return {
@@ -88,23 +95,22 @@ export const getContent = cache(async (): Promise<SiteContent> => {
   };
 });
 
-const isPublished = (p: Project) => p.published !== false;
-
-/** Featured + published projects for the home page */
+/** Featured + published projects for the home page (Featured never overrides Published) */
 export async function getFeaturedProjects() {
   const { projects } = await getContent();
-  return projects.filter((p) => isPublished(p) && p.featured !== false);
+  return featuredProjects(projects);
 }
 
 /** All published projects for /projects */
 export async function getPublishedProjects() {
   const { projects } = await getContent();
-  return projects.filter(isPublished);
+  return publishedProjects(projects);
 }
 
+/** A public project page — unpublished or unknown slugs return null (404) */
 export async function getProject(slug: string) {
   const { projects } = await getContent();
-  return projects.find((p) => p.slug === slug && isPublished(p)) || null;
+  return findPublicProject(projects, slug);
 }
 
 // ---- GitHub contributions: live when GITHUB_TOKEN is set, snapshot otherwise

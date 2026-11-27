@@ -55,6 +55,12 @@ export default function AdminShell({ children, configured }: { children: React.R
   const [session, setSession] = useState<Session | null>(null);
   const [state, setState] = useState<"loading" | "out" | "denied" | "ok">("loading");
   const [unread, setUnread] = useState(0);
+  const [refreshFailed, setRefreshFailed] = useState(false);
+  useEffect(() => {
+    const onRefresh = (e: Event) => setRefreshFailed(!(e as CustomEvent<{ ok: boolean }>).detail?.ok);
+    window.addEventListener("site-refresh", onRefresh);
+    return () => window.removeEventListener("site-refresh", onRefresh);
+  }, []);
 
   const check = useCallback(async (s: Session | null) => {
     setSession(s);
@@ -134,7 +140,15 @@ export default function AdminShell({ children, configured }: { children: React.R
           </div>
         </aside>
         <main className="dash-main" id="main">
-          <div className="dash-page">{children}</div>
+          <div className="dash-page">
+            {refreshFailed && (
+              <p className="d-notice" role="status">
+                Your change is saved, but the public site couldn&apos;t be refreshed right away. It will update automatically within a minute.
+                <button type="button" className="d-icon-btn" aria-label="Dismiss" onClick={() => setRefreshFailed(false)}>×</button>
+              </p>
+            )}
+            {children}
+          </div>
         </main>
       </div>
     </AdminCtx.Provider>

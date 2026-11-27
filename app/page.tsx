@@ -12,7 +12,7 @@ import BottomNav from "@/components/BottomNav";
 import ExperienceTimeline from "@/components/ExperienceTimeline";
 
 // Rebuilt at most every 5 minutes, and immediately after admin edits.
-export const revalidate = 300;
+export const revalidate = 60;
 
 export async function generateMetadata() {
   const { profile } = await getContent();

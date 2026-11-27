@@ -4,10 +4,23 @@ import { browserClient } from "@/lib/supabase/browser";
 export const db = () => browserClient();
 
 /** Tell Next.js to rebuild public pages after a change. */
-export async function refreshSite() {
+export async function authHeaders(): Promise<Record<string, string>> {
+  const { data } = await db().auth.getSession();
+  const token = data.session?.access_token;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+/** Rebuild the public pages now. Returns false (and tells the dashboard) if that failed. */
+export async function refreshSite(): Promise<boolean> {
+  let ok = false;
   try {
-    await fetch("/api/revalidate", { method: "POST" });
-  } catch {}
+    const res = await fetch("/api/revalidate", { method: "POST", headers: await authHeaders() });
+    ok = res.ok;
+  } catch {
+    ok = false;
+  }
+  if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("site-refresh", { detail: { ok } }));
+  return ok;
 }
 
 /** Resize + convert an image to WebP in the browser. */
