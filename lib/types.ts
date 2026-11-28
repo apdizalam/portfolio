@@ -23,6 +23,7 @@ export type Education = {
   dates: string;
   place: string;
   sort: number;
+  logo_url?: string;
 };
 
 export type Experience = {

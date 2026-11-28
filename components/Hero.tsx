@@ -17,7 +17,7 @@ export default function Hero({ profile }: { profile: Profile }) {
             {profile.tagline.split("\n").map((line, i) => (
               <span key={i}>{i > 0 && <br />}{line}</span>
             ))}
-            <svg viewBox="0 0 60 30" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M3 18c12-14 32-16 50 2" /><path d="m46 21 7-1 1-7" /></svg>
+            <svg className="hero__arrow" viewBox="0 0 60 30" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path className="hero__arrow-line" pathLength={1} d="M3 18c12-14 32-16 50 2" /><path className="hero__arrow-head" pathLength={1} d="m46 21 7-1 1-7" /></svg>
           </p>
         )}
         <div className="hero__photo">

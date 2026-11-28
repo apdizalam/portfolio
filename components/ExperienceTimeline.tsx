@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import type { Education, Experience } from "@/lib/types";
-import { safeUrl } from "@/lib/utils";
+import { buildTimeline } from "@/lib/timeline";
 import { CapIcon } from "./Icons";
 
 const BriefcaseIcon = () => (
@@ -15,12 +15,25 @@ const GemIcon = () => (
   </svg>
 );
 
-function Logo({ src }: { src: string }) {
-  const [ok, setOk] = useState(true);
-  const url = safeUrl(src);
-  if (!url || !ok) return <BriefcaseIcon />;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={url} alt="" onError={() => setOk(false)} />;
+/**
+ * The organisation's real logo when one has been added. Without one (or if the image fails),
+ * a neutral icon is shown in the normal dark style, so it never looks like an organisation's logo.
+ */
+function OrgLogo({ src, name, kind }: { src: string; name: string; kind: "education" | "experience" }) {
+  const [failed, setFailed] = useState(false);
+  if (src && !failed) {
+    return (
+      <div className="timeline__icon timeline__icon--logo">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt={`${name} logo`} loading="lazy" decoding="async" onError={() => setFailed(true)} />
+      </div>
+    );
+  }
+  return (
+    <div className="timeline__icon timeline__icon--fallback" aria-hidden="true">
+      {kind === "education" ? <CapIcon /> : <BriefcaseIcon />}
+    </div>
+  );
 }
 
 function Description({ text }: { text: string }) {
@@ -38,41 +51,43 @@ function Description({ text }: { text: string }) {
   );
 }
 
+// Education first, then Experience (order decided in lib/timeline.ts).
 export default function ExperienceTimeline({ experience, education }: { experience: Experience[]; education: Education[] }) {
   return (
     <ol className="timeline xp">
-      {experience.map((x) => (
-        <li key={`x${x.id}`} className="timeline__item">
-          <div className={`timeline__icon${x.logo_url ? " timeline__icon--logo" : ""}`}><Logo src={x.logo_url} /></div>
-          <div className="timeline__body">
-            <h3>{x.role}</h3>
-            {(x.company || x.employment_type) && (
-              <p className="xp__company">{[x.company, x.employment_type].filter(Boolean).join(" · ")}</p>
-            )}
-            {(x.period || x.location || x.work_mode) && (
-              <p className="meta">
-                {x.period}
-                {x.period && (x.location || x.work_mode) && " • "}
-                {[x.location, x.work_mode].filter(Boolean).join(" · ")}
-              </p>
-            )}
-            {x.description && <Description text={x.description} />}
-            {x.skills?.length > 0 && (
-              <p className="xp__skills"><GemIcon /> {x.skills.join(", ")}</p>
-            )}
-          </div>
-        </li>
-      ))}
-      {education.map((e) => (
-        <li key={`e${e.id}`} className="timeline__item">
-          <div className="timeline__icon"><CapIcon /></div>
-          <div className="timeline__body">
-            <h3>{e.school}</h3>
-            {(e.dates || e.place) && <p className="meta">{[e.dates, e.place].filter(Boolean).join(" • ")}</p>}
-            {e.degree && <p>{e.degree}</p>}
-          </div>
-        </li>
-      ))}
+      {buildTimeline(education, experience).map((item) =>
+        item.kind === "education" ? (
+          <li key={item.key} className="timeline__item" data-kind="education">
+            <OrgLogo src={item.logo} name={item.data.school} kind="education" />
+            <div className="timeline__body">
+              <h3>{item.data.school}</h3>
+              {(item.data.dates || item.data.place) && (
+                <p className="meta">{[item.data.dates, item.data.place].filter(Boolean).join(" • ")}</p>
+              )}
+              {item.data.degree && <p>{item.data.degree}</p>}
+            </div>
+          </li>
+        ) : (
+          <li key={item.key} className="timeline__item" data-kind="experience">
+            <OrgLogo src={item.logo} name={item.data.company || item.data.role} kind="experience" />
+            <div className="timeline__body">
+              <h3>{item.data.role}</h3>
+              {(item.data.company || item.data.employment_type) && (
+                <p className="xp__company">{[item.data.company, item.data.employment_type].filter(Boolean).join(" · ")}</p>
+              )}
+              {(item.data.period || item.data.location || item.data.work_mode) && (
+                <p className="meta">
+                  {item.data.period}
+                  {item.data.period && (item.data.location || item.data.work_mode) && " • "}
+                  {[item.data.location, item.data.work_mode].filter(Boolean).join(" · ")}
+                </p>
+              )}
+              {item.data.description && <Description text={item.data.description} />}
+              {item.data.skills?.length > 0 && <p className="xp__skills"><GemIcon /> {item.data.skills.join(", ")}</p>}
+            </div>
+          </li>
+        ),
+      )}
     </ol>
   );
 }

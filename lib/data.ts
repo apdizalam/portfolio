@@ -33,7 +33,7 @@ function fromJson(): SiteContent {
       github: c.profile.github,
       linkedin: c.profile.linkedin,
     },
-    experience: [],
+    experience: (c.experience || []).map((x: any, i: number) => ({ id: i + 1, sort: i, logo_url: "", skills: [], ...x })),
     education: (c.education || []).map((e: any, i: number) => ({ id: i + 1, sort: i, ...e })),
     skills: c.skills.map((s: any, i: number) => ({ id: i + 1, sort: i, name: s.name, icon: s.icon })),
     projects: c.projects.map((p: any, i: number) => ({

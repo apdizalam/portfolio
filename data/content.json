@@ -14,7 +14,15 @@
       "school": "Amoud University",
       "dates": "Jul 2022 – Sep 2026",
       "place": "Borama",
-      "degree": "Bachelor's Degree in Software Engineering"
+      "degree": "Bachelor's Degree in Software Engineering",
+      "logo_url": "/assets/logos/amoud-university-seal.png"
+    },
+    {
+      "school": "Meta",
+      "degree": "Meta Full Stack Developer",
+      "dates": "",
+      "place": "",
+      "logo_url": "/assets/logos/meta-symbol.svg"
     }
   ],
   "skills": [
@@ -135,6 +143,50 @@
         "Marketplace"
       ],
       "date": "Nov 2026"
+    }
+  ],
+  "experience": [
+    {
+      "role": "Data Collection Volunteer",
+      "company": "Amoud University (Jaamacadda Camuud)",
+      "employment_type": "Part-time",
+      "period": "May 2026 · 1 mo",
+      "location": "Borama, Somaliland",
+      "work_mode": "On-site",
+      "description": "Volunteered in a data collection project with Amoud University, supporting the gathering and organization of information for research purposes.",
+      "skills": [
+        "Data Collection",
+        "Data Entry"
+      ],
+      "logo_url": "/assets/logos/amoud-university-seal.png"
+    },
+    {
+      "role": "ICT Intern",
+      "company": "Somaliland Ministry of Trade and Tourism",
+      "employment_type": "Internship",
+      "period": "Jul 2025 – Sep 2025 · 3 mos",
+      "location": "Borama, Somaliland",
+      "work_mode": "On-site",
+      "description": "Completed a three-month internship with the ICT Department at the Ministry of Trade and Tourism, Somaliland, in Borama.",
+      "skills": [
+        "Technical Support",
+        "AI for IT Support"
+      ],
+      "logo_url": ""
+    },
+    {
+      "role": "Polling Station Chairman",
+      "company": "Somaliland Electoral Commission (NEC)",
+      "employment_type": "Part-time",
+      "period": "Nov 2024 · 1 mo",
+      "location": "Borama, Somaliland",
+      "work_mode": "On-site",
+      "description": "Served as a Polling Station Chairman during the November 2024 Somaliland elections, supervising polling station activities and working closely with election staff.",
+      "skills": [
+        "Team Management",
+        "Election Administration"
+      ],
+      "logo_url": ""
     }
   ]
 }
