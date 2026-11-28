@@ -329,3 +329,31 @@ update public.projects set
   features = E'Customer Mobile App: Customers sign in from their phone to see their bills, profile and account details in one place.\nBills & Unpaid Balances: Shows each customer''s bills and highlights what is still unpaid.\nPayments & History: Records payments and lets customers look back at their full payment history.\nAdmin Dashboard: A web dashboard for managing customers, meters and billing, with dashboard statistics and transactions.\nMeters & Billing: Track meters and readings and turn them into bills for each customer.\nReports & Manager Accounts: Billing reports for the utility, plus separate administrator and manager accounts with token-based sign-in.',
   updated_at = now()
 where slug = 'shaba-billing-system';
+
+-- ---------------- education logos + Meta ----------------
+-- =====================================================================
+-- Education logos + Meta Full Stack Developer (run once in Supabase → SQL Editor,
+-- with "Database" selected, not "Logs"). Safe to run more than once.
+-- =====================================================================
+
+-- 1. Education entries can have a logo (existing rows get '' = no logo)
+alter table public.education add column if not exists logo_url text not null default '';
+
+-- 2. Authentic logos (files served from the portfolio: /public/assets/logos)
+--    Amoud University seal: from amouduniversity.org (the university's site icon)
+update public.education
+set logo_url = '/assets/logos/amoud-university-seal.png'
+where school ilike 'Amoud University%' and logo_url = '';
+
+update public.experience
+set logo_url = '/assets/logos/amoud-university-seal.png', updated_at = now()
+where company ilike 'Amoud University%' and logo_url = '';
+
+-- 3. Meta Full Stack Developer (no dates or credential details added — none were provided)
+insert into public.education (school, degree, dates, place, logo_url, sort)
+select 'Meta', 'Meta Full Stack Developer', '', '', '/assets/logos/meta-symbol.svg',
+       coalesce((select max(sort) + 1 from public.education), 0)
+where not exists (
+  select 1 from public.education
+  where school ilike 'Meta' or degree ilike '%Meta Full Stack%'
+);

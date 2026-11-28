@@ -10,6 +10,7 @@ import ProjectsGrid from "@/components/ProjectsGrid";
 import ContactForm from "@/components/ContactForm";
 import BottomNav from "@/components/BottomNav";
 import ExperienceTimeline from "@/components/ExperienceTimeline";
+import { timelineHeading } from "@/lib/timeline";
 
 // Rebuilt at most every 5 minutes, and immediately after admin edits.
 export const revalidate = 60;
@@ -44,7 +45,7 @@ export default async function Home() {
 
         {(experience.length > 0 || education.length > 0) && (
           <Reveal id="experience" className="section">
-            <h2 className="section__title">{experience.length ? "Experience & Education" : "Education"}</h2>
+            <h2 className="section__title">{timelineHeading(education, experience)}</h2>
             <ExperienceTimeline experience={experience} education={education} />
           </Reveal>
         )}

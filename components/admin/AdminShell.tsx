@@ -17,8 +17,8 @@ const NAV = [
   { href: "/admin", label: "Overview", Icon: DashOverviewIcon },
   { href: "/admin/profile", label: "Profile", Icon: DashProfileIcon },
   { href: "/admin/skills", label: "Skills", Icon: DashSkillsIcon },
-  { href: "/admin/experience", label: "Experience", Icon: DashExperienceIcon },
   { href: "/admin/education", label: "Education", Icon: DashEducationIcon },
+  { href: "/admin/experience", label: "Experience", Icon: DashExperienceIcon },
   { href: "/admin/projects", label: "Projects", Icon: DashProjectsIcon },
   { href: "/admin/messages", label: "Messages", Icon: DashInboxIcon },
 ];
