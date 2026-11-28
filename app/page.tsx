@@ -10,7 +10,6 @@ import ProjectsGrid from "@/components/ProjectsGrid";
 import ContactForm from "@/components/ContactForm";
 import BottomNav from "@/components/BottomNav";
 import ExperienceTimeline from "@/components/ExperienceTimeline";
-import { timelineHeading } from "@/lib/timeline";
 
 // Rebuilt at most every 5 minutes, and immediately after admin edits.
 export const revalidate = 60;
@@ -43,10 +42,17 @@ export default async function Home() {
           <GitHubActivity data={contributions} profileUrl={isHttps(profile.github) ? profile.github : `https://github.com/${GITHUB_USER}`} />
         </Reveal>
 
-        {(experience.length > 0 || education.length > 0) && (
+        {education.length > 0 && (
+          <Reveal id="education" className="section">
+            <h2 className="section__title">Education</h2>
+            <ExperienceTimeline education={education} experience={[]} />
+          </Reveal>
+        )}
+
+        {experience.length > 0 && (
           <Reveal id="experience" className="section">
-            <h2 className="section__title">{timelineHeading(education, experience)}</h2>
-            <ExperienceTimeline experience={experience} education={education} />
+            <h2 className="section__title">Experience</h2>
+            <ExperienceTimeline education={[]} experience={experience} />
           </Reveal>
         )}
 

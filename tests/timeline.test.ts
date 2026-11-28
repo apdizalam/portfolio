@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Education, Experience } from "@/lib/types";
-import { buildTimeline, timelineHeading } from "@/lib/timeline";
+import { buildTimeline } from "@/lib/timeline";
 
 const edu = (over: Partial<Education>): Education => ({ id: 1, school: "Amoud University", degree: "", dates: "", place: "", sort: 0, ...over });
 const xp = (over: Partial<Experience>): Experience => ({
@@ -39,16 +39,6 @@ describe("Education & Experience order", () => {
   });
 });
 
-describe("Heading", () => {
-  it("says Education & Experience when both exist", () => {
-    expect(timelineHeading([amoud], [intern])).toBe("Education & Experience");
-  });
-  it("falls back to a single word when only one kind exists", () => {
-    expect(timelineHeading([amoud], [])).toBe("Education");
-    expect(timelineHeading([], [intern])).toBe("Experience");
-  });
-});
-
 describe("Logos", () => {
   it("passes real logo paths through", () => {
     const items = buildTimeline([amoud, meta], [volunteer]);
@@ -59,9 +49,15 @@ describe("Logos", () => {
     ]);
   });
 
-  it("entries without a verified logo get none (the page then shows a neutral icon)", () => {
-    const items = buildTimeline([], [intern, nec]);
-    expect(items.map((i) => i.logo)).toEqual(["", ""]);
+  it("entries without a logo get none (the page then shows a neutral icon)", () => {
+    const items = buildTimeline([], [xp({ id: 7 })]);
+    expect(items.map((i) => i.logo)).toEqual([""]);
+  });
+
+  it("the Ministry and NEC roles use the Somaliland national emblem", () => {
+    const emblem = "/assets/logos/somaliland-national-emblem.png";
+    const items = buildTimeline([], [{ ...intern, logo_url: emblem }, { ...nec, logo_url: emblem }]);
+    expect(items.map((i) => i.logo)).toEqual([emblem, emblem]);
   });
 
   it("older education rows without the logo column still work", () => {

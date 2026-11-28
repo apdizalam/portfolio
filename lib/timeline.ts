@@ -1,4 +1,4 @@
-// Education & Experience timeline: order, heading and logos (pure, unit-tested).
+// Education & Experience timeline: order and logos (pure, unit-tested).
 import type { Education, Experience } from "./types";
 import { safeUrl } from "./utils";
 
@@ -16,7 +16,3 @@ export function buildTimeline(education: Education[], experience: Experience[]):
   ];
 }
 
-export function timelineHeading(education: Education[], experience: Experience[]): string {
-  if (education.length && experience.length) return "Education & Experience";
-  return experience.length ? "Experience" : "Education";
-}
